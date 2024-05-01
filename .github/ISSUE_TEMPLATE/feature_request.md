@@ -1,10 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "[FEATURE]"
+title: "[FEATURE] LNO-0: "
 labels: enhancement
 assignees: panzerKotwagen
 
 ---
-
-Acceptance criteria:
+Requirements:
