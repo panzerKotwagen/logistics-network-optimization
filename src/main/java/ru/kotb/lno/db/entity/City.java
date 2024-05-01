@@ -24,12 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "cities")
-public class City {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private long id;
+public class City extends AbstractEntity {
 
     /**
      * The city name
