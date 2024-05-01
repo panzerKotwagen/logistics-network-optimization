@@ -1,0 +1,18 @@
+### IntelliJ
+out/
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+
+### Java
+*.class
+*.jar
+.idea
+
+### GitHub
+.github
+
+### Maven
+target/
