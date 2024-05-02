@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestComponent;
 import ru.kotb.lno.graph.components.Edge;
-import ru.kotb.lno.graph.components.Node;
 import ru.kotb.lno.graph.impl.JGraphT;
 
 import java.util.List;
@@ -16,16 +15,6 @@ public class GraphTest {
 
     private final Graph graph = new JGraphT();
 
-//    @Autowired
-//    public GraphTest(Graph graph) {
-//        this.graph = graph;
-//    }
-
-//    @BeforeEach
-//    void foo() {
-//        graph = new GraphImpl();
-//    }
-
     @Test
     void getNonExistingNodeReturnNull() {
         Assertions.assertThat(graph.getEdge("S", "S")).isNull();
@@ -35,7 +24,6 @@ public class GraphTest {
     void getExistingNodeReturnNode() {
         String nodeName = "S";
         graph.addNode(nodeName);
-        Node node = graph.getNode(nodeName);
         Assertions.assertThat(graph.getNode(nodeName)).isNotNull();
     }
 
@@ -120,7 +108,7 @@ public class GraphTest {
         }
 
         for (int i = 0; i < nodeNames.size(); i++) {
-            for (int j = 1; j < nodeNames.size(); j++) {
+            for (int j = 0; j < nodeNames.size(); j++) {
                 if (i != j) {
                     graph.addEdge(nodeNames.get(i), nodeNames.get(j), "edge", 1, 2);
                 }
@@ -128,7 +116,7 @@ public class GraphTest {
         }
 
         for (int i = 0; i < nodeNames.size(); i++) {
-            for (int j = 1; j < nodeNames.size(); j++) {
+            for (int j = 0; j < nodeNames.size(); j++) {
                 if (i != j) {
                     graph.removeEdge(nodeNames.get(i), nodeNames.get(j));
                     Edge edge = graph.getEdge(nodeNames.get(i), nodeNames.get(j));
