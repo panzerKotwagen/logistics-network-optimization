@@ -14,7 +14,7 @@ import java.util.Set;
 @TestComponent
 public class GraphTest {
 
-    private Graph graph = new JGraphT();
+    private final Graph graph = new JGraphT();
 
 //    @Autowired
 //    public GraphTest(Graph graph) {
@@ -35,7 +35,7 @@ public class GraphTest {
     void getExistingNodeReturnNode() {
         String nodeName = "S";
         graph.addNode(nodeName);
-        Node node =  graph.getNode(nodeName);
+        Node node = graph.getNode(nodeName);
         Assertions.assertThat(graph.getNode(nodeName)).isNotNull();
     }
 
