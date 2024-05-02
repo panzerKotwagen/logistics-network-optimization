@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kotb.lno.db.entity.City;
-import ru.kotb.lno.db.repository.CityRepository;
+import ru.kotb.lno.db.entity.Node;
+import ru.kotb.lno.db.repository.NodeRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,46 +16,46 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @Transactional
-class CityRepositoryTest {
+class NodeRepositoryTest {
 
-    private final CityRepository cityRepository;
+    private final NodeRepository nodeRepository;
 
     @Autowired
-    public CityRepositoryTest(CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
+    public NodeRepositoryTest(NodeRepository nodeRepository) {
+        this.nodeRepository = nodeRepository;
     }
+
 
     @Test
     public void repositoryNotNull() {
-        Assertions.assertThat(cityRepository).isNotNull();
+        Assertions.assertThat(nodeRepository).isNotNull();
     }
 
     @Test
     public void findByIdReturnEntity() {
-        City entity = new City();
+        Node entity = new Node();
 
-        entity = cityRepository.save(entity);
-        entity = cityRepository.findById(entity.getId()).get();
-
+        entity = nodeRepository.save(entity);
+        entity = nodeRepository.findById(entity.getId()).get();
         Assertions.assertThat(entity).isNotNull();
     }
 
     @Test
     public void findByIdNonExistedEntity() {
-        Optional<City> entity = cityRepository.findById(0);
+        Optional<Node> entity = nodeRepository.findById(0);
 
         Assertions.assertThat(entity).isEmpty();
     }
 
     @Test
     public void findAllReturnMoreThenOneEntity() {
-        City entity = new City();
-        City entity2 = new City();
+        Node entity = new Node();
+        Node entity2 = new Node();
 
-        cityRepository.save(entity);
-        cityRepository.save(entity2);
+        nodeRepository.save(entity);
+        nodeRepository.save(entity2);
 
-        List<City> entityList = cityRepository.findAll();
+        List<Node> entityList = nodeRepository.findAll();
 
         Assertions.assertThat(entityList).isNotNull();
         Assertions.assertThat(entityList.size()).isEqualTo(2);
@@ -63,39 +63,39 @@ class CityRepositoryTest {
 
     @Test
     public void saveSameEntityTwoTimesReturnsSameEntity() {
-        City entity = new City();
+        Node entity = new Node();
 
-        City savedTestEntity1 = cityRepository.save(entity);
-        City savedTestEntity2 = cityRepository.save(entity);
+        Node savedTestEntity1 = nodeRepository.save(entity);
+        Node savedTestEntity2 = nodeRepository.save(entity);
 
         Assertions.assertThat(savedTestEntity1).isEqualTo(savedTestEntity2);
     }
 
     @Test
     public void findAllReturnEmptyList() {
-        List<City> entityList = cityRepository.findAll();
+        List<Node> entityList = nodeRepository.findAll();
 
         Assertions.assertThat(entityList.size()).isEqualTo(0);
     }
 
     @Test
     public void saveReturnEntityWithID() {
-        City entity = new City();
+        Node entity = new Node();
 
-        City savedEntity = cityRepository.save(entity);
+        Node savedEntity = nodeRepository.save(entity);
 
         Assertions.assertThat(savedEntity.getId()).isNotNull();
     }
 
     @Test
     public void updateEntityReturnEntityNotNull() {
-        City entity = new City();
-        entity = cityRepository.save(entity);
+        Node entity = new Node();
+        entity = nodeRepository.save(entity);
 
-        City entitySave = cityRepository.findById(entity.getId()).get();
+        Node entitySave = nodeRepository.findById(entity.getId()).get();
         entitySave.setName("New name");
 
-        City updatedTestEntity = cityRepository.save(entitySave);
+        Node updatedTestEntity = nodeRepository.save(entitySave);
 
         Assertions.assertThat(updatedTestEntity.getName()).isNotNull();
         Assertions.assertThat(updatedTestEntity.getId())
@@ -106,10 +106,10 @@ class CityRepositoryTest {
 
     @Test
     public void deleteReturnEntityIsNull() {
-        City entity = new City();
+        Node entity = new Node();
 
-        City savedEntity = cityRepository.save(entity);
+        Node savedEntity = nodeRepository.save(entity);
 
-        assertAll(() -> cityRepository.deleteById(savedEntity.getId()));
+        assertAll(() -> nodeRepository.deleteById(savedEntity.getId()));
     }
 }
