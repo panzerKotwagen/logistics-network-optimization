@@ -1,5 +1,8 @@
 package ru.kotb.lno.graph;
 
+import ru.kotb.lno.graph.components.Edge;
+import ru.kotb.lno.graph.components.Node;
+
 import java.util.Set;
 
 

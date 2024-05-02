@@ -2,21 +2,29 @@ package ru.kotb.lno.graph;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
+import ru.kotb.lno.graph.components.Edge;
+import ru.kotb.lno.graph.components.Node;
+import ru.kotb.lno.graph.impl.JGraphT;
 
 import java.util.List;
+import java.util.Set;
 
 
 @TestComponent
 public class GraphTest {
 
-    private final Graph graph;
+    private Graph graph = new JGraphT();
 
-    @Autowired
-    public GraphTest(Graph graph) {
-        this.graph = graph;
-    }
+//    @Autowired
+//    public GraphTest(Graph graph) {
+//        this.graph = graph;
+//    }
+
+//    @BeforeEach
+//    void foo() {
+//        graph = new GraphImpl();
+//    }
 
     @Test
     void getNonExistingNodeReturnNull() {
@@ -27,6 +35,7 @@ public class GraphTest {
     void getExistingNodeReturnNode() {
         String nodeName = "S";
         graph.addNode(nodeName);
+        Node node =  graph.getNode(nodeName);
         Assertions.assertThat(graph.getNode(nodeName)).isNotNull();
     }
 
@@ -62,10 +71,9 @@ public class GraphTest {
         graph.addNode(nodeName2);
 
         graph.addEdge(nodeName1, nodeName2, edgeName, 1, 1);
-
-        org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () -> graph.addEdge(nodeName1, nodeName2, edgeName, 1, 1));
+        graph.addEdge(nodeName1, nodeName2, edgeName, 1, 1);
+        Assertions.assertThat(graph.getEdge(nodeName1, nodeName2)).isNotNull();
+        Assertions.assertThat(graph.getEdge(nodeName2, nodeName1)).isNotNull();
     }
 
     @Test
@@ -77,10 +85,10 @@ public class GraphTest {
         graph.addNode(nodeName2);
 
         graph.addEdge(nodeName1, nodeName2, edgeName, 1, 1);
+        graph.addEdge(nodeName2, nodeName1, edgeName, 1, 1);
 
-        org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () -> graph.addEdge(nodeName2, nodeName1, edgeName, 1, 1));
+        Assertions.assertThat(graph.getEdges(nodeName1).size()).isEqualTo(1);
+        Assertions.assertThat(graph.getEdges(nodeName2).size()).isEqualTo(1);
     }
 
     @Test
@@ -141,18 +149,20 @@ public class GraphTest {
         }
 
         for (int i = 0; i < nodeNames.size(); i++) {
-            for (int j = 1; j < nodeNames.size(); j++) {
+            for (int j = 0; j < nodeNames.size(); j++) {
                 if (i != j) {
                     graph.addEdge(nodeNames.get(i), nodeNames.get(j), "edge", 1, 2);
                 }
             }
         }
 
-        int edgeSize = graph.getEdges(removedNodeName).size();
+        Set<Edge> edgeSet = graph.getEdges(removedNodeName);
+        int edgeSize = edgeSet.size();
         Assertions.assertThat(edgeSize).isEqualTo(3);
 
         graph.removeNode(removedNodeName);
-        Assertions.assertThat(graph.getEdges(removedNodeName)).isNull();
+        edgeSet = graph.getEdges(removedNodeName);
+        Assertions.assertThat(edgeSet).isNull();
 
         for (int i = 1; i < nodeNames.size(); i++) {
             Edge edge = graph.getEdge(removedNodeName, nodeNames.get(i));
