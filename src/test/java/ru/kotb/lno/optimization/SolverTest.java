@@ -10,6 +10,7 @@ import java.util.List;
 class SolverTest {
 
     Solver solver = new Solver();
+    CompromiseScheme compromiseScheme = new CompromiseScheme();
 
     @Test
     void compareGlobalCriteria() {
@@ -52,5 +53,26 @@ class SolverTest {
 
         criteriaList = solver.paretoSet(criteriaList);
         Assertions.assertThat(criteriaList.size()).isEqualTo(1);
+    }
+
+    @Test
+    void convolution() {
+        int[] criteriaList1 = new int[]{1, 2};
+        int[] criteriaList2 = new int[]{3, 4};
+        int[] criteriaList3 = new int[]{4, 3};
+        int[] criteriaList4 = new int[]{6, 2};
+        Solver.GlobalCriteria globalCriteria1 = new Solver.GlobalCriteria(criteriaList1);
+        Solver.GlobalCriteria globalCriteria2 = new Solver.GlobalCriteria(criteriaList2);
+        Solver.GlobalCriteria globalCriteria3 = new Solver.GlobalCriteria(criteriaList3);
+        Solver.GlobalCriteria globalCriteria4 = new Solver.GlobalCriteria(criteriaList4);
+
+        List<Solver.GlobalCriteria> criteriaList = new ArrayList<>();
+        criteriaList.add(globalCriteria1);
+        criteriaList.add(globalCriteria2);
+        criteriaList.add(globalCriteria3);
+        criteriaList.add(globalCriteria4);
+
+        Solver.GlobalCriteria optimal = compromiseScheme.convolution(criteriaList, new double[]{0.2, 1});
+        Assertions.assertThat(optimal).isEqualTo(globalCriteria2);
     }
 }
