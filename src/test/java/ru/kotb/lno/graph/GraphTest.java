@@ -157,4 +157,18 @@ public class GraphTest {
             Assertions.assertThat(edge).isNull();
         }
     }
+
+    @Test
+    void updateWeightsCorrectly() {
+        String nodeName1 = "S";
+        String nodeName2 = "T";
+        graph.addNode(nodeName1);
+        graph.addNode(nodeName2);
+
+        graph.addEdge(nodeName1, nodeName2, "Edge", 1, 1);
+        graph.updateEdgeWeight(nodeName1, nodeName2, 99, 991);
+        Edge edge = graph.getEdge(nodeName1, nodeName2);
+        Assertions.assertThat(edge.getWeights()[0]).isEqualTo(99);
+        Assertions.assertThat(edge.getWeights()[1]).isEqualTo(991);
+    }
 }

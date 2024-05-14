@@ -75,4 +75,11 @@ public class JGraphT implements Graph {
     public void removeEdge(String firstNodeName, String secondNodeName) {
         graph.removeEdge(firstNodeName, secondNodeName);
     }
+
+    @Override
+    public void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2) {
+        Edge edge = getEdge(firstNodeName, secondNodeName);
+        edge.getWeights()[0] = w1;
+        edge.getWeights()[1] = w2;
+    }
 }

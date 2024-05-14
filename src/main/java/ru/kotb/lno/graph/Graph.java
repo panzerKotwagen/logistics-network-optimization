@@ -1,10 +1,9 @@
 package ru.kotb.lno.graph;
 
-import ru.kotb.lno.graph.components.Edge;
-import ru.kotb.lno.graph.components.Node;
-
 import java.util.Set;
 
+import ru.kotb.lno.graph.components.Edge;
+import ru.kotb.lno.graph.components.Node;
 
 /**
  * The interface describes a simple undirected weighted graph
@@ -28,7 +27,7 @@ public interface Graph {
      * @param w2             weight value #2
      */
     void addEdge(String firstNodeName, String secondNodeName, String name,
-                 int w1, int w2);
+            int w1, int w2);
 
     /**
      * Get node on its name
@@ -87,4 +86,11 @@ public interface Graph {
      */
     void removeEdge(String firstNodeName, String secondNodeName);
 
+    /**
+     * Updates edge weights
+     *
+     * @param firstNodeName  the name of the first node
+     * @param secondNodeName the name of the second node
+     */
+    void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2);
 }

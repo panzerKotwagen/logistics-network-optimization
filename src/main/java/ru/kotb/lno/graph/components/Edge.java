@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Edge extends DefaultEdge {
 
-    private final int WEIGHT_COUNT = 2;
+    private static final int WEIGHT_COUNT = 2;
 
     /**
      * Edge name
