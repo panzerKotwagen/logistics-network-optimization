@@ -1,12 +1,12 @@
 package ru.kotb.lno.graph.components;
 
-import java.util.Objects;
-
-import org.jgrapht.graph.DefaultEdge;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jgrapht.graph.DefaultEdge;
+
+import java.util.Objects;
+
 
 /**
  * The class describes a graph edge
