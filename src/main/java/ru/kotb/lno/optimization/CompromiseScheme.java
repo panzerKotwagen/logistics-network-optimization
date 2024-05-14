@@ -16,11 +16,11 @@ public class CompromiseScheme {
      * @param criteriaWeights    criteria weights
      * @return optimal vector
      */
-    public Solver.GlobalCriteria convolution(List<Solver.GlobalCriteria> globalCriteriaList, double[] criteriaWeights) {
+    public GlobalCriteria convolution(List<GlobalCriteria> globalCriteriaList, double[] criteriaWeights) {
         double maxCriteriaSum = Integer.MIN_VALUE;
-        Solver.GlobalCriteria optimalCriteria = null;
+        GlobalCriteria optimalCriteria = null;
 
-        for (Solver.GlobalCriteria currentCriteria : globalCriteriaList) {
+        for (GlobalCriteria currentCriteria : globalCriteriaList) {
             double criteriaSum = computeCriteriaSum(currentCriteria, criteriaWeights);
             if (criteriaSum > maxCriteriaSum) {
                 maxCriteriaSum = criteriaSum;
@@ -38,7 +38,7 @@ public class CompromiseScheme {
      * @param criteriaWeights criteria weights
      * @return weighted sum of criteria
      */
-    private double computeCriteriaSum(Solver.GlobalCriteria criteria, double[] criteriaWeights) {
+    private double computeCriteriaSum(GlobalCriteria criteria, double[] criteriaWeights) {
         double sum = 0;
         for (int i = 0; i < criteriaWeights.length; i++) {
             sum += criteria.getLocalCriteriaArray()[i] * criteriaWeights[i];

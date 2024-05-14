@@ -66,16 +66,4 @@ public class Solver {
         }
         return 1;
     }
-
-    @Getter
-    static class GlobalCriteria {
-
-        private static final int CRITERIA_COUNT = 2;
-
-        private final int[] localCriteriaArray = new int[CRITERIA_COUNT];
-
-        public GlobalCriteria(int[] criteriaList) {
-            System.arraycopy(criteriaList, 0, localCriteriaArray, 0, CRITERIA_COUNT);
-        }
-    }
 }

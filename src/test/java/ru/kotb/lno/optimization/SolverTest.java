@@ -17,9 +17,9 @@ class SolverTest {
         int[] criteriaList1 = new int[]{1, 2};
         int[] criteriaList2 = new int[]{3, 4};
         int[] criteriaList3 = new int[]{4, 3};
-        Solver.GlobalCriteria globalCriteria1 = new Solver.GlobalCriteria(criteriaList1);
-        Solver.GlobalCriteria globalCriteria2 = new Solver.GlobalCriteria(criteriaList2);
-        Solver.GlobalCriteria globalCriteria3 = new Solver.GlobalCriteria(criteriaList3);
+        GlobalCriteria globalCriteria1 = new GlobalCriteria(criteriaList1);
+        GlobalCriteria globalCriteria2 = new GlobalCriteria(criteriaList2);
+        GlobalCriteria globalCriteria3 = new GlobalCriteria(criteriaList3);
 
         int res1 = solver.compareTwoCriteria(globalCriteria1, globalCriteria2);
         int res2 = solver.compareTwoCriteria(globalCriteria1, globalCriteria3);
@@ -40,12 +40,12 @@ class SolverTest {
         int[] criteriaList2 = new int[]{3, 4};
         int[] criteriaList3 = new int[]{4, 3};
         int[] criteriaList4 = new int[]{5, 5};
-        Solver.GlobalCriteria globalCriteria1 = new Solver.GlobalCriteria(criteriaList1);
-        Solver.GlobalCriteria globalCriteria2 = new Solver.GlobalCriteria(criteriaList2);
-        Solver.GlobalCriteria globalCriteria3 = new Solver.GlobalCriteria(criteriaList3);
-        Solver.GlobalCriteria globalCriteria4 = new Solver.GlobalCriteria(criteriaList4);
+        GlobalCriteria globalCriteria1 = new GlobalCriteria(criteriaList1);
+        GlobalCriteria globalCriteria2 = new GlobalCriteria(criteriaList2);
+        GlobalCriteria globalCriteria3 = new GlobalCriteria(criteriaList3);
+        GlobalCriteria globalCriteria4 = new GlobalCriteria(criteriaList4);
 
-        List<Solver.GlobalCriteria> criteriaList = new ArrayList<>();
+        List<GlobalCriteria> criteriaList = new ArrayList<>();
         criteriaList.add(globalCriteria1);
         criteriaList.add(globalCriteria2);
         criteriaList.add(globalCriteria3);
@@ -61,18 +61,18 @@ class SolverTest {
         int[] criteriaList2 = new int[]{3, 4};
         int[] criteriaList3 = new int[]{4, 3};
         int[] criteriaList4 = new int[]{6, 2};
-        Solver.GlobalCriteria globalCriteria1 = new Solver.GlobalCriteria(criteriaList1);
-        Solver.GlobalCriteria globalCriteria2 = new Solver.GlobalCriteria(criteriaList2);
-        Solver.GlobalCriteria globalCriteria3 = new Solver.GlobalCriteria(criteriaList3);
-        Solver.GlobalCriteria globalCriteria4 = new Solver.GlobalCriteria(criteriaList4);
+        GlobalCriteria globalCriteria1 = new GlobalCriteria(criteriaList1);
+        GlobalCriteria globalCriteria2 = new GlobalCriteria(criteriaList2);
+        GlobalCriteria globalCriteria3 = new GlobalCriteria(criteriaList3);
+        GlobalCriteria globalCriteria4 = new GlobalCriteria(criteriaList4);
 
-        List<Solver.GlobalCriteria> criteriaList = new ArrayList<>();
+        List<GlobalCriteria> criteriaList = new ArrayList<>();
         criteriaList.add(globalCriteria1);
         criteriaList.add(globalCriteria2);
         criteriaList.add(globalCriteria3);
         criteriaList.add(globalCriteria4);
 
-        Solver.GlobalCriteria optimal = compromiseScheme.convolution(criteriaList, new double[]{0.2, 1});
+        GlobalCriteria optimal = compromiseScheme.convolution(criteriaList, new double[]{0.2, 1});
         Assertions.assertThat(optimal).isEqualTo(globalCriteria2);
     }
 }
