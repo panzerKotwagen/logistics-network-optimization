@@ -3,6 +3,8 @@ package ru.kotb.lno.graph;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.components.Node;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -94,4 +96,12 @@ public interface Graph {
      * @param secondNodeName the name of the second node
      */
     void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2);
+
+    /**
+     * Returns the shortest path between two vertices as a list of edges
+     *
+     * @param firstNodeName  the name of the first node
+     * @return list of edges represents the shortest path
+     */
+    Map<String, Integer> findShortestPath(String firstNodeName);
 }

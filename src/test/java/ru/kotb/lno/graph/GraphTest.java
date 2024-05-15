@@ -7,6 +7,7 @@ import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.impl.JGraphT;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -170,5 +171,51 @@ public class GraphTest {
         Edge edge = graph.getEdge(nodeName1, nodeName2);
         Assertions.assertThat(edge.getWeights()[0]).isEqualTo(99);
         Assertions.assertThat(edge.getWeights()[1]).isEqualTo(991);
+    }
+
+    @Test
+    void name() {
+        String nodeName1 = "S";
+        String nodeName2 = "T";
+        graph.addNode(nodeName1);
+        graph.addNode(nodeName2);
+
+        graph.addEdge(nodeName1, nodeName2, "Edge", 1, 1);
+        graph.getEdge(nodeName1, nodeName2).getSource2();
+        System.out.println();
+    }
+
+    @Test
+    void findShortestPath() {
+        String[] nodes = {"S", "2", "3", "4", "5", "T"};
+        for (String node : nodes) {
+            graph.addNode(node);
+        }
+
+        graph.addEdge("S", "T", "a", 14, 1);
+        graph.addEdge("S", "3", "b", 9, 1);
+        graph.addEdge("S", "2", "c", 7, 1);
+
+        graph.addEdge("2", "3", "d", 10, 1);
+        graph.addEdge("2", "4", "d", 15, 1);
+
+        graph.addEdge("3", "T", "d", 2, 1);
+        graph.addEdge("3", "4", "d", 11, 1);
+
+        graph.addEdge("5", "T", "a", 9, 1);
+        graph.addEdge("5", "4", "a", 6, 1);
+
+        Map<String, Integer> distances = graph.findShortestPath("S");
+        int distanceToT = distances.get("T");
+        int distanceTo2 = distances.get("2");
+        int distanceTo3 = distances.get("3");
+        int distanceTo4 = distances.get("4");
+        int distanceTo5 = distances.get("5");
+
+        Assertions.assertThat(distanceToT).isEqualTo(11);
+        Assertions.assertThat(distanceTo2).isEqualTo(7);
+        Assertions.assertThat(distanceTo3).isEqualTo(9);
+        Assertions.assertThat(distanceTo4).isEqualTo(20);
+        Assertions.assertThat(distanceTo5).isEqualTo(20);
     }
 }
