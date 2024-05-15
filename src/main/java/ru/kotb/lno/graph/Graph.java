@@ -2,9 +2,7 @@ package ru.kotb.lno.graph;
 
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.components.Node;
-import ru.kotb.lno.optimization.GlobalCriteria;
 
-import java.util.Map;
 import java.util.Set;
 
 
@@ -39,6 +37,13 @@ public interface Graph {
      * @return node or null
      */
     Node getNode(String name);
+
+    /**
+     * Get all node names from the graph
+     *
+     * @return set of the node names
+     */
+    Set<String> nodeNamesSet();
 
     /**
      * Get edge
@@ -98,10 +103,19 @@ public interface Graph {
     void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2);
 
     /**
-     * Returns the shortest path between two vertices as a list of edges
+     * Returns the node at the opposite end from {@code adjacentEdge}
      *
-     * @param firstNodeName the name of the first node
-     * @return list of edges represents the shortest path
+     * @param adjacentEdge the node for which we are looking for a neighbor node
+     * @param current      the name of the known vertex
+     * @return the node at the opposite end from {@code adjacentEdge}
      */
-    Map<String, GlobalCriteria> findShortestPath(String firstNodeName);
+    String getOppositeNode(Edge adjacentEdge, String current);
+
+    /**
+     * Get all adjacent edges with a vertex
+     *
+     * @param nodeName node name
+     * @return set of adjacent edges
+     */
+    Set<Edge> getAdjacentEdges(String nodeName);
 }

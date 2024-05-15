@@ -1,6 +1,9 @@
 package ru.kotb.lno.optimization;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.kotb.lno.optimization.schemes.CompromiseScheme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +12,16 @@ import java.util.List;
 /**
  * The class that solve multi-criteria task
  */
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Solver {
 
-    private CompromiseScheme scheme = new CompromiseScheme();
+    private CompromiseScheme scheme;
 
     public GlobalCriteria solve(List<GlobalCriteria> globalCriteriaList) {
         List<GlobalCriteria> criteriaList = paretoSet(globalCriteriaList);
-        return scheme.convolution(criteriaList, new double[]{0.5, 0.5});
+        return scheme.findOptimal(criteriaList);
     }
 
     /**

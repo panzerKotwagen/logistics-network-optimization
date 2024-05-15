@@ -34,11 +34,7 @@ public class Edge extends DefaultEdge {
         weights[1] = w2;
     }
 
-    public Object getSource2() {
-        return getSource();
-    }
-
-    public String getSourseNode() {
+    public String getSourceNode() {
         return getSource().toString();
     }
 

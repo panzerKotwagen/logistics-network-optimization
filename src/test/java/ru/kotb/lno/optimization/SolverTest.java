@@ -2,6 +2,7 @@ package ru.kotb.lno.optimization;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.kotb.lno.optimization.schemes.impl.Convolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,10 @@ import java.util.List;
 
 class SolverTest {
 
-    Solver solver = new Solver();
-    CompromiseScheme compromiseScheme = new CompromiseScheme();
+    private final Solver solver = new Solver();
+
+    private final Convolution convolutionCompromiseScheme
+            = new Convolution(0.2, 1);
 
     @Test
     void compareGlobalCriteria() {
@@ -72,7 +75,7 @@ class SolverTest {
         criteriaList.add(globalCriteria3);
         criteriaList.add(globalCriteria4);
 
-        GlobalCriteria optimal = compromiseScheme.convolution(criteriaList, new double[]{0.2, 1});
+        GlobalCriteria optimal = convolutionCompromiseScheme.findOptimal(criteriaList);
         Assertions.assertThat(optimal).isEqualTo(globalCriteria2);
     }
 }

@@ -3,7 +3,6 @@ package ru.kotb.lno.optimization;
 import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 
 /**
@@ -17,9 +16,10 @@ public class GlobalCriteria {
     private final int[] localCriteriaArray = new int[CRITERIA_COUNT];
 
     public static final GlobalCriteria MAX_CRITERIA = new GlobalCriteria(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
     public static final GlobalCriteria ZERO_CRITERIA = new GlobalCriteria(0, 0);
 
-    public GlobalCriteria(int ... criteriaList) {
+    public GlobalCriteria(int... criteriaList) {
         System.arraycopy(criteriaList, 0, localCriteriaArray, 0, CRITERIA_COUNT);
     }
 
