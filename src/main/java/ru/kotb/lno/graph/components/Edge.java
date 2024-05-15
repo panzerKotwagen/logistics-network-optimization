@@ -34,12 +34,16 @@ public class Edge extends DefaultEdge {
         weights[1] = w2;
     }
 
-    public Node getSourseNode() {
-        return (Node) getSource();
+    public Object getSource2() {
+        return getSource();
     }
 
-    public Node getTargetNode() {
-        return (Node) getTarget();
+    public String getSourseNode() {
+        return getSource().toString();
+    }
+
+    public String getTargetNode() {
+        return getTarget().toString();
     }
 
     @Override
