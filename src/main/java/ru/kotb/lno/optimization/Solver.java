@@ -11,6 +11,13 @@ import java.util.List;
  */
 public class Solver {
 
+    private CompromiseScheme scheme = new CompromiseScheme();
+
+    public GlobalCriteria solve(List<GlobalCriteria> globalCriteriaList) {
+        List<GlobalCriteria> criteriaList = paretoSet(globalCriteriaList);
+        return scheme.convolution(criteriaList, new double[]{0.5, 0.5});
+    }
+
     /**
      * Creates the pareto set
      *

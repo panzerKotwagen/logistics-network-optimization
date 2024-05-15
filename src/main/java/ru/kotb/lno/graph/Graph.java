@@ -2,8 +2,8 @@ package ru.kotb.lno.graph;
 
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.components.Node;
+import ru.kotb.lno.optimization.GlobalCriteria;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,8 +100,8 @@ public interface Graph {
     /**
      * Returns the shortest path between two vertices as a list of edges
      *
-     * @param firstNodeName  the name of the first node
+     * @param firstNodeName the name of the first node
      * @return list of edges represents the shortest path
      */
-    Map<String, Integer> findShortestPath(String firstNodeName);
+    Map<String, GlobalCriteria> findShortestPath(String firstNodeName);
 }

@@ -12,7 +12,6 @@ import ru.kotb.lno.optimization.Solver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,56 +102,60 @@ public class JGraphT implements Graph {
         return graph.edgesOf(nodeName);
     }
 
-//    Set<Node> getAdjacentNodes(String nodeName) {
-//        Set<Edge> adjacentEdges = graph.edgesOf(nodeName);
-//        Set<Node> adjacentNodes = new HashSet<>();
-//        for (Edge edge : adjacentEdges) {
-//            String source = edge.getSourseNode();
-//            String target = edge.getTargetNode();
-//            if (source.equals(nodeName)) {
-//                adjacentNodes.add(target);
-//            } else {
-//                adjacentNodes.add(source);
-//            }
-//        }
-//        return adjacentNodes;
-//    }
-
-    @Override
-    public Map<String, Integer> findShortestPath(String firstNodeName) {
-        Map<String, Integer> distances = new LinkedHashMap<>();
+    public Map<String, GlobalCriteria> findShortestPath(String firstNodeName) {
+        Map<String, GlobalCriteria> criteriaMap = new LinkedHashMap<>();
         for (String vertex : graph.vertexSet()) {
-            distances.put(vertex, Integer.MAX_VALUE);
+            criteriaMap.put(vertex, GlobalCriteria.MAX_CRITERIA);
         }
-        distances.put(firstNodeName, 0);
 
-        Queue<NodeAndDistance> queue = new LinkedList<>();
-        queue.add(new NodeAndDistance(firstNodeName, 0));
+        Queue<NodeAndCriteria> queue = new LinkedList<>();
+        queue.add(new NodeAndCriteria(firstNodeName, GlobalCriteria.ZERO_CRITERIA));
 
         while (!queue.isEmpty()) {
-            NodeAndDistance current = queue.poll();
+            NodeAndCriteria current = queue.poll();
 
-            if (current.distance > distances.get(current.node)) {
+            //Minus because we are solving the problem of minimization
+            int res = -solver.compareTwoCriteria(current.criteria, criteriaMap.get(current.node));
+            //Processing only the vertex with the smallest distance
+            if (res < 0) {
                 continue;
             }
 
             for (Edge adjacentEdge : getAdjacentEdges(current.node)) {
-                String neighbourNode = getOppositeNode(adjacentEdge, current);
-                int distance = current.distance + adjacentEdge.getWeights()[0];
+                String neighbourNode = getOppositeNode(adjacentEdge, current.node);
+                GlobalCriteria comparedCriteria = current.criteria.add(
+                        new GlobalCriteria(adjacentEdge.getWeights())
+                );
 
-                if (distance < distances.get(neighbourNode)) {
-                    distances.put(neighbourNode, distance);
-                    queue.add(new NodeAndDistance(neighbourNode, distance));
+                List<GlobalCriteria> criteriaList = List.of(
+                        criteriaMap.get(neighbourNode),
+                        comparedCriteria
+                );
+
+                GlobalCriteria bestCriteria = solver.solve(criteriaList);
+
+                //We consider this new path only if it is better than
+                // any path we have found so far
+                if (bestCriteria.equals(comparedCriteria)) {
+                    criteriaMap.put(neighbourNode, bestCriteria);
+                    queue.add(new NodeAndCriteria(neighbourNode, bestCriteria));
                 }
             }
         }
-        return distances;
+        return criteriaMap;
     }
 
-    private static String getOppositeNode(Edge adjacentEdge, NodeAndDistance current) {
+    /**
+     * Returns the node at the opposite end from {@code adjacentEdge}
+     *
+     * @param adjacentEdge the node for which we are looking for a neighbor node
+     * @param current      the name of the known vertex
+     * @return the node at the opposite end from {@code adjacentEdge}
+     */
+    private static String getOppositeNode(Edge adjacentEdge, String current) {
         String source = adjacentEdge.getSourseNode();
         String target = adjacentEdge.getTargetNode();
-        if (source.equals(current.node)) {
+        if (source.equals(current)) {
             return target;
         } else {
             return source;
@@ -160,49 +163,10 @@ public class JGraphT implements Graph {
     }
 
     @AllArgsConstructor
-    private static class NodeAndDistance {
+    private static class NodeAndCriteria {
+
         public String node;
-        public Integer distance;
-    }
 
-//    public void foo() {
-//        Map<Node, Edge> nodeEdgeMap = new LinkedHashMap<>();
-//        Set<Node> viewed = new HashSet<>();
-//        Edge lastOptimal = null;
-//        Node current = getNode("");
-//        for (Edge adjacentEdge : getAdjacentEdges(current.getName())) {
-//            Node targetNode = adjacentEdge.getTargetNode();
-//            //If the vertex has not been marked
-//            if (!nodeEdgeMap.containsKey(targetNode)) {
-//                nodeEdgeMap.put(targetNode, adjacentEdge);
-//            } else {
-//                //Find the optimal edge of two: the already recorded
-//                // one and the current one
-//                Edge existedEdge = nodeEdgeMap.get(targetNode);
-//                List<Edge> comparedEdges = List.of(existedEdge, adjacentEdge);
-//                Edge optimal = findOptimalEdge(comparedEdges);
-//
-//                nodeEdgeMap.put(targetNode, optimal);
-//            }
-//        }
-//        List.of();
-//    }
-
-    private Edge findOptimalEdge(List<Edge> edges) {
-        List<GlobalCriteria> criteriaList = new ArrayList<>();
-        //For finding an edge with weighting coefficients equal to the
-        // values of the global criterion
-        Map<GlobalCriteria, Edge> edgeCriteriaMap = new HashMap<>();
-        for (Edge edge : edges) {
-            GlobalCriteria criteria = new GlobalCriteria(edge.getWeights());
-            criteriaList.add(criteria);
-            edgeCriteriaMap.put(criteria, edge);
-        }
-        //Build pareto set
-        List<GlobalCriteria> paretoSet = solver.paretoSet(criteriaList);
-        //Find optimal criteria
-        GlobalCriteria optimal = scheme.convolution(paretoSet, new double[]{0.5, 0.5});
-
-        return edgeCriteriaMap.get(optimal);
+        public GlobalCriteria criteria;
     }
 }
