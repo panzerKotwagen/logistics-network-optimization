@@ -8,7 +8,7 @@ import static ru.kotb.lno.gui.Action.addVertexAction;
 
 
 /**
- * The application menu.
+ * The application menu
  */
 public class Menu extends JMenuBar {
 
@@ -19,7 +19,7 @@ public class Menu extends JMenuBar {
 
     /**
      * Makes submenu File of the menu bar. Each menu item is
-     * associated with appropriate FileAction.
+     * associated with appropriate FileAction
      */
     private void makeFileMenu() {
         JMenu menuFile = new JMenu("Graph");

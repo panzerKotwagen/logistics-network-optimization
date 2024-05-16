@@ -6,11 +6,13 @@ import static ru.kotb.lno.gui.Action.addEdgeAction;
 import static ru.kotb.lno.gui.Action.addVertexAction;
 
 
+/**
+ * The toolbar of the main window
+ */
 public class Toolbar extends JToolBar {
 
     /**
-     * Makes the toolbar. Each button is associated with appropriate
-     * Action.
+     * Constructs the toolbar. Each button is associated with appropriate Action
      */
     public Toolbar() {
         super("Tools");
