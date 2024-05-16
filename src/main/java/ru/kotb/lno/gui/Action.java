@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 import static javax.swing.JOptionPane.showInputDialog;
 
@@ -84,9 +85,14 @@ public class Action extends AbstractAction {
      * Invoke dialog window to add a vertex
      */
     public void addVertex() {
-        String vertexName = showInputDialog(mainWindow, "Vertex name");
-        graph.addNode(vertexName);
-        System.out.println(graph.getNode(vertexName));
+        Optional<String> res = Optional.ofNullable(
+                showInputDialog(mainWindow, "Vertex name"));
+
+        if (res.isPresent()) {
+            String vertexName = res.get();
+            graph.addNode(vertexName);
+            System.out.println(graph.getNode(vertexName));
+        }
     }
 
     /**
@@ -94,15 +100,18 @@ public class Action extends AbstractAction {
      */
     public void addEdge() {
         AddEdgeDialog addEdgeDialog = new AddEdgeDialog(mainWindow);
-        EdgeDTO edge = addEdgeDialog.getInputtedData();
+        Optional<EdgeDTO> res = Optional.ofNullable(addEdgeDialog.getInputtedData());
 
-        graph.addEdge(
-                edge.getSource(),
-                edge.getTarget(),
-                "",
-                edge.getWeight1(),
-                edge.getWeight2()
-        );
-        System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
+        if (res.isPresent()) {
+            EdgeDTO edge = res.get();
+            graph.addEdge(
+                    edge.getSource(),
+                    edge.getTarget(),
+                    "",
+                    edge.getWeight1(),
+                    edge.getWeight2()
+            );
+            System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
+        }
     }
 }
