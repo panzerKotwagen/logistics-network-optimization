@@ -2,7 +2,9 @@ package ru.kotb.lno.gui;
 
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
+
+import static ru.kotb.lno.gui.Action.addEdgeAction;
+import static ru.kotb.lno.gui.Action.addVertexAction;
 
 
 /**
@@ -22,8 +24,8 @@ public class Menu extends JMenuBar {
     private void makeFileMenu() {
         JMenu menuFile = new JMenu("Graph");
 
-        JMenuItem mItemAddVertex = new JMenuItem("Add vertex");
-        JMenuItem mItemAddEdge = new JMenuItem("Add edge");
+        JMenuItem mItemAddVertex = new JMenuItem(addVertexAction);
+        JMenuItem mItemAddEdge = new JMenuItem(addEdgeAction);
 
         menuFile.add(mItemAddVertex);
         menuFile.addSeparator();
