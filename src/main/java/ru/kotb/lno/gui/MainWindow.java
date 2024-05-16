@@ -3,6 +3,9 @@ package ru.kotb.lno.gui;
 import javax.swing.*;
 import java.awt.*;
 
+import static ru.kotb.lno.gui.Action.addEdgeAction;
+import static ru.kotb.lno.gui.Action.addVertexAction;
+
 
 /**
  * The class that main window of the application
@@ -26,6 +29,9 @@ public class MainWindow extends JFrame {
 
         Menu menuBar = new Menu();
         this.setJMenuBar(menuBar);
+
+        addVertexAction.setMainWindow(this);
+        addEdgeAction.setMainWindow(this);
 
         setLocationRelativeTo(null);
         this.setVisible(true);
