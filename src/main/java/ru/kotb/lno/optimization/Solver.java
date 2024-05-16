@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * The class that solve multi-criteria task
+ * The class that solve multi-criteria minimization task
  */
 @Setter
 @AllArgsConstructor
@@ -64,9 +64,9 @@ public class Solver {
         boolean isWorse = false;
 
         for (int i = 0; i < localCriteriaArray1.length; i++) {
-            if (localCriteriaArray1[i] > localCriteriaArray2[i]) {
+            if (localCriteriaArray1[i] < localCriteriaArray2[i]) {
                 isBetter = true;
-            } else if (localCriteriaArray1[i] < localCriteriaArray2[i]) {
+            } else if (localCriteriaArray1[i] > localCriteriaArray2[i]) {
                 isWorse = true;
             }
         }

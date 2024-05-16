@@ -23,13 +23,13 @@ public class Convolution implements CompromiseScheme {
 
     @Override
     public GlobalCriteria findOptimal(List<GlobalCriteria> globalCriteriaList) {
-        double maxCriteriaSum = Integer.MIN_VALUE;
+        double minCriteriaSum = Integer.MAX_VALUE;
         GlobalCriteria optimalCriteria = null;
 
         for (GlobalCriteria currentCriteria : globalCriteriaList) {
             double criteriaSum = computeCriteriaSum(currentCriteria);
-            if (criteriaSum > maxCriteriaSum) {
-                maxCriteriaSum = criteriaSum;
+            if (criteriaSum < minCriteriaSum) {
+                minCriteriaSum = criteriaSum;
                 optimalCriteria = currentCriteria;
             }
         }
