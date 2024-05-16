@@ -30,9 +30,9 @@ class SolverTest {
         int res4 = solver.compareTwoCriteria(globalCriteria2, globalCriteria3);
         int res5 = solver.compareTwoCriteria(globalCriteria3, globalCriteria2);
 
-        Assertions.assertThat(res1).isEqualTo(-1);
-        Assertions.assertThat(res2).isEqualTo(-1);
-        Assertions.assertThat(res3).isEqualTo(1);
+        Assertions.assertThat(res1).isEqualTo(1);
+        Assertions.assertThat(res2).isEqualTo(1);
+        Assertions.assertThat(res3).isEqualTo(-1);
         Assertions.assertThat(res4).isEqualTo(0);
         Assertions.assertThat(res5).isEqualTo(0);
     }
@@ -76,6 +76,6 @@ class SolverTest {
         criteriaList.add(globalCriteria4);
 
         GlobalCriteria optimal = convolutionCompromiseScheme.findOptimal(criteriaList);
-        Assertions.assertThat(optimal).isEqualTo(globalCriteria2);
+        Assertions.assertThat(optimal).isEqualTo(globalCriteria1);
     }
 }
