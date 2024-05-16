@@ -1,12 +1,14 @@
 package ru.kotb.lno.graph.algorithms;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.optimization.GlobalCriteria;
 import ru.kotb.lno.optimization.Solver;
-import ru.kotb.lno.optimization.schemes.CompromiseScheme;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,17 +19,17 @@ import java.util.Queue;
 /**
  * The class describing Dijkstra's algorithm for finding the shortest path
  */
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class DijkstraOptimalPath {
 
-    private final Solver solver;
-
-    public DijkstraOptimalPath(CompromiseScheme scheme) {
-        this.solver = new Solver(scheme);
-    }
+    private Solver solver;
 
     //TODO: Describe
     public Map<String, GlobalCriteria> findOptimalPath(Graph graph, String firstNodeName) {
         Map<String, GlobalCriteria> criteriaMap = new LinkedHashMap<>();
+        Map<String, Boolean> marked = new HashMap<>();
         for (String vertex : graph.nodeNamesSet()) {
             criteriaMap.put(vertex, GlobalCriteria.MAX_CRITERIA);
         }
@@ -37,9 +39,12 @@ public class DijkstraOptimalPath {
 
         while (!queue.isEmpty()) {
             NodeAndCriteria current = queue.poll();
+            if (marked.containsKey(current.node)) {
+                continue;
+            }
+            marked.put(current.node, true);
 
-            //Minus because we are solving the problem of minimization
-            int res = -solver.compareTwoCriteria(current.criteria, criteriaMap.get(current.node));
+            int res = solver.compareTwoCriteria(current.criteria, criteriaMap.get(current.node));
             //Processing only the vertex with the smallest distance
             if (res < 0) {
                 continue;
