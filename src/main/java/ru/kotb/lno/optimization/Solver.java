@@ -1,15 +1,28 @@
 package ru.kotb.lno.optimization;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.kotb.lno.optimization.schemes.CompromiseScheme;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * The class that solve multi-criteria task
+ * The class that solve multi-criteria minimization task
  */
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Solver {
+
+    private CompromiseScheme scheme;
+
+    public GlobalCriteria solve(List<GlobalCriteria> globalCriteriaList) {
+        List<GlobalCriteria> criteriaList = paretoSet(globalCriteriaList);
+        return scheme.findOptimal(criteriaList);
+    }
 
     /**
      * Creates the pareto set
@@ -51,9 +64,9 @@ public class Solver {
         boolean isWorse = false;
 
         for (int i = 0; i < localCriteriaArray1.length; i++) {
-            if (localCriteriaArray1[i] > localCriteriaArray2[i]) {
+            if (localCriteriaArray1[i] < localCriteriaArray2[i]) {
                 isBetter = true;
-            } else if (localCriteriaArray1[i] < localCriteriaArray2[i]) {
+            } else if (localCriteriaArray1[i] > localCriteriaArray2[i]) {
                 isWorse = true;
             }
         }

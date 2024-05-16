@@ -39,6 +39,13 @@ public interface Graph {
     Node getNode(String name);
 
     /**
+     * Get all node names from the graph
+     *
+     * @return set of the node names
+     */
+    Set<String> nodeNamesSet();
+
+    /**
      * Get edge
      *
      * @param firstNodeName  first node linked with edge
@@ -94,4 +101,21 @@ public interface Graph {
      * @param secondNodeName the name of the second node
      */
     void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2);
+
+    /**
+     * Returns the node at the opposite end from {@code adjacentEdge}
+     *
+     * @param adjacentEdge the node for which we are looking for a neighbor node
+     * @param current      the name of the known vertex
+     * @return the node at the opposite end from {@code adjacentEdge}
+     */
+    String getOppositeNode(Edge adjacentEdge, String current);
+
+    /**
+     * Get all adjacent edges with a vertex
+     *
+     * @param nodeName node name
+     * @return set of adjacent edges
+     */
+    Set<Edge> getAdjacentEdges(String nodeName);
 }

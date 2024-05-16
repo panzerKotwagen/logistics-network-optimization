@@ -82,4 +82,25 @@ public class JGraphT implements Graph {
         edge.getWeights()[0] = w1;
         edge.getWeights()[1] = w2;
     }
+
+    @Override
+    public Set<Edge> getAdjacentEdges(String nodeName) {
+        return graph.edgesOf(nodeName);
+    }
+
+    @Override
+    public Set<String> nodeNamesSet() {
+        return graph.vertexSet();
+    }
+
+    @Override
+    public String getOppositeNode(Edge adjacentEdge, String current) {
+        String source = adjacentEdge.getSourceNode();
+        String target = adjacentEdge.getTargetNode();
+        if (source.equals(current)) {
+            return target;
+        } else {
+            return source;
+        }
+    }
 }
