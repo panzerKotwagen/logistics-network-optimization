@@ -1,8 +1,8 @@
 package ru.kotb.lno.gui.fx;
 
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
@@ -13,14 +13,18 @@ public class MainWindow extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         stage.setTitle("logistics-network-optimization");
         stage.setWidth(900);
         stage.setHeight(600);
         stage.centerOnScreen();
 
-        Group root = new Group();
-        Scene scene = new Scene(root);
+        VBox vb = new VBox();
+
+        vb.getChildren().add(new MyMenuBar());
+        vb.getChildren().add(new MyToolBar());
+
+        Scene scene = new Scene(vb);
         stage.setScene(scene);
 
         stage.show();
