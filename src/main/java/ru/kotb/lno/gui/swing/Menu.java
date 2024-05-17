@@ -1,10 +1,10 @@
-package ru.kotb.lno.gui;
+package ru.kotb.lno.gui.swing;
 
 
 import javax.swing.*;
 
-import static ru.kotb.lno.gui.Action.addEdgeAction;
-import static ru.kotb.lno.gui.Action.addVertexAction;
+import static ru.kotb.lno.gui.swing.Action.addEdgeAction;
+import static ru.kotb.lno.gui.swing.Action.addVertexAction;
 
 
 /**

@@ -1,4 +1,4 @@
-package ru.kotb.lno.gui;
+package ru.kotb.lno.gui.swing;
 
 import lombok.Getter;
 import ru.kotb.lno.dto.EdgeDTO;

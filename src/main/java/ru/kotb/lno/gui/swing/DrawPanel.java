@@ -1,4 +1,4 @@
-package ru.kotb.lno.gui;
+package ru.kotb.lno.gui.swing;
 
 import lombok.Getter;
 
@@ -9,8 +9,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
