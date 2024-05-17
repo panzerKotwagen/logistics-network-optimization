@@ -1,7 +1,9 @@
 package ru.kotb.lno.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import static ru.kotb.lno.gui.Action.addEdgeAction;
 import static ru.kotb.lno.gui.Action.addVertexAction;
@@ -12,7 +14,7 @@ import static ru.kotb.lno.gui.Action.addVertexAction;
  */
 public class MainWindow extends JFrame {
 
-    private JPanel graphPanel;
+    private DrawPanel drawPanel = new DrawPanel();
 
     public MainWindow() {
         super("logistics-network-optimization");
@@ -20,9 +22,8 @@ public class MainWindow extends JFrame {
         this.setMinimumSize(new Dimension(650, 600));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        graphPanel = new JPanel();
-        graphPanel.add(new JLabel("Graph panel"));
-        this.add(graphPanel, BorderLayout.CENTER);
+        drawPanel = new DrawPanel();
+        this.add(drawPanel, BorderLayout.CENTER);
 
         Toolbar toolBar = new Toolbar();
         this.add(toolBar, BorderLayout.NORTH);
@@ -35,6 +36,10 @@ public class MainWindow extends JFrame {
 
         setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    public DrawPanel getDrawPanel() {
+        return drawPanel;
     }
 
     public static void main(String[] args) {
