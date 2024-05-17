@@ -40,11 +40,18 @@ public class DrawPane extends Pane {
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                if (!GraphEditActions.addNodeBtnIsPressed) {
+                    return;
+                }
                 int x = (int) mouseEvent.getX();
                 int y = (int) mouseEvent.getY();
                 System.out.println(x + " : " + y);
                 String nodeName = GraphEditActions.addNode();
-                drawPoint(new Point(x, y, nodeName));
+                if (nodeName != null) {
+                    drawPoint(new Point(x, y, nodeName));
+                }
+                MyToolBar.addNodeBtn.setDisable(false);
+                GraphEditActions.addNodeBtnIsPressed = false;
             }
         });
 

@@ -18,6 +18,8 @@ public class GraphEditActions {
      */
     private static final Graph graph = new JGraphT();
 
+    public static boolean addNodeBtnIsPressed = false;
+
     /**
      * Add node to the graph
      */
