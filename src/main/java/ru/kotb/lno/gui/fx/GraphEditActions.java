@@ -1,10 +1,12 @@
 package ru.kotb.lno.gui.fx;
 
 import javafx.scene.control.TextInputDialog;
+import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.impl.JGraphT;
 
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -20,6 +22,10 @@ public class GraphEditActions {
 
     public static boolean addNodeBtnIsPressed = false;
 
+    public static Set<String> getNodes() {
+        return graph.nodeNamesSet();
+    }
+
     /**
      * Add node to the graph
      */
@@ -31,6 +37,17 @@ public class GraphEditActions {
         graph.addNode(nodeName.get());
         System.out.println(graph.getNode(nodeName.get()));
         return nodeName.get();
+    }
+
+    public static void addEdge(EdgeDTO edge) {
+        graph.addEdge(
+                edge.getSource(),
+                edge.getTarget(),
+                "",
+                edge.getWeight1(),
+                edge.getWeight2()
+        );
+        System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
     }
 
     /**
