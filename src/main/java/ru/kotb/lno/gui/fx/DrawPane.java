@@ -1,9 +1,19 @@
 package ru.kotb.lno.gui.fx;
 
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -24,9 +34,23 @@ public class DrawPane extends Pane {
     private final Canvas canvas;
 
     public DrawPane() {
-        canvas = new Canvas(300, 300);
+        setBackground(new Background(new BackgroundFill(Color.WHITESMOKE.brighter(), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        canvas = new Canvas(900, 600);
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                int x = (int) mouseEvent.getX();
+                int y = (int) mouseEvent.getY();
+                System.out.println(x + " : " + y);
+                String nodeName = GraphEditActions.addNode();
+                drawPoint(new Point(x, y, nodeName));
+            }
+        });
+
         graphicsContext = canvas.getGraphicsContext2D();
         initGraphicsContext();
+
         this.getChildren().add(canvas);
     }
 
@@ -45,8 +69,12 @@ public class DrawPane extends Pane {
     public void drawPoint(Point point) {
         double x = point.x;
         double y = point.y;
-        double width = point.radius * 2;
-        graphicsContext.strokeOval(x, y, width, width);
+        int radius = point.radius;
+        double width = radius * 2;
+        Text text = new Text(x - point.name.length() * 6, y + 5, point.name);
+        text.setFont(new Font(20));
+        this.getChildren().add(text);
+        graphicsContext.strokeOval(x - radius, y - radius, width, width);
     }
 
     private void initGraphicsContext() {
@@ -56,7 +84,7 @@ public class DrawPane extends Pane {
 
     public static class Point {
 
-        private final int radius = 25;
+        private final int radius = 30;
 
         private final int x;
 

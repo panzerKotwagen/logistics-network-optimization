@@ -21,13 +21,14 @@ public class GraphEditActions {
     /**
      * Add node to the graph
      */
-    public static void addNode() {
+    public static String addNode() {
         Optional<String> nodeName = addNodeDialog();
         if (nodeName.isEmpty()) {
-            return;
+            return null;
         }
         graph.addNode(nodeName.get());
         System.out.println(graph.getNode(nodeName.get()));
+        return nodeName.get();
     }
 
     /**
