@@ -6,6 +6,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
+/**
+ * The class that main window of the application
+ */
 public class MainWindow extends Application {
 
     public static void main(String[] args) {
