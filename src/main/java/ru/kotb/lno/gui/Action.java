@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Optional;
 
 import static javax.swing.JOptionPane.showInputDialog;
@@ -41,6 +43,8 @@ public class Action extends AbstractAction {
      */
     private static MainWindow mainWindow;
 
+    private static DrawPanel drawPanel;
+
     /**
      * Constructor for {@code Action}
      *
@@ -65,6 +69,31 @@ public class Action extends AbstractAction {
      */
     public void setMainWindow(MainWindow mainWindow) {
         Action.mainWindow = mainWindow;
+        Action.drawPanel = mainWindow.getDrawPanel();
+
+        drawPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (addVertexAction.enabled) {
+                    return;
+                }
+
+                super.mousePressed(e);
+                int x = e.getX() - 25;
+                int y = e.getY() - 25;
+                System.out.println(x + " " + y);
+
+                String vertexName = addVertex();
+                if (vertexName == null) {
+                    return;
+                }
+
+                System.out.println(graph.nodeNamesSet());
+                drawPanel.addPoint(new DrawPanel.Point(x, y, vertexName));
+                drawPanel.repaint();
+                addVertexAction.setEnabled(true);
+            }
+        });
     }
 
     @Override
@@ -72,7 +101,8 @@ public class Action extends AbstractAction {
         String comStr = e.getActionCommand();
         switch (comStr) {
             case "Add vertex":
-                addVertex();
+                addVertexAction.setEnabled(false);
+//                addVertex();
                 break;
             case "Add edge":
                 addEdge();
@@ -84,7 +114,7 @@ public class Action extends AbstractAction {
     /**
      * Invoke dialog window to add a vertex
      */
-    public void addVertex() {
+    public String addVertex() {
         Optional<String> res = Optional.ofNullable(
                 showInputDialog(mainWindow, "Vertex name"));
 
@@ -92,7 +122,13 @@ public class Action extends AbstractAction {
             String vertexName = res.get();
             graph.addNode(vertexName);
             System.out.println(graph.getNode(vertexName));
+            return vertexName;
         }
+        return null;
+    }
+
+    public void addVertexByClickingMouseOnDrawPanel() {
+//        drawPanel.
     }
 
     /**

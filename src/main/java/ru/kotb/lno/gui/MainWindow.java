@@ -19,7 +19,7 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         super("logistics-network-optimization");
 
-        this.setMinimumSize(new Dimension(650, 600));
+        this.setMinimumSize(new Dimension(900, 600));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         drawPanel = new DrawPanel();
