@@ -2,6 +2,7 @@ package ru.kotb.lno.gui.fx;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -15,6 +16,16 @@ public class MainWindow extends Application {
         launch(args);
     }
 
+    private void drawLines(GraphicsContext gc) {
+
+        gc.beginPath();
+        gc.moveTo(30.5, 30.5);
+        gc.lineTo(150.5, 30.5);
+        gc.lineTo(150.5, 150.5);
+        gc.lineTo(30.5, 30.5);
+        gc.stroke();
+    }
+
     @Override
     public void start(Stage stage) {
         stage.setTitle("logistics-network-optimization");
@@ -26,6 +37,7 @@ public class MainWindow extends Application {
 
         vb.getChildren().add(new MyMenuBar());
         vb.getChildren().add(new MyToolBar());
+        vb.getChildren().add(new DrawPane());
 
         Scene scene = new Scene(vb);
         stage.setScene(scene);
