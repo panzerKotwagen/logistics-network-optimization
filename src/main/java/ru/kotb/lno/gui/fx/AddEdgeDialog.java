@@ -21,7 +21,6 @@ import java.util.Optional;
  */
 public class AddEdgeDialog {
 
-    //     = FXCollections.observableArrayList();
     private EdgeDTO inputtedEdge;
 
     public Optional<EdgeDTO> invoke() {
@@ -35,6 +34,7 @@ public class AddEdgeDialog {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 
+        //TODO: fix ability to specify one node as the source and target
         ComboBox<String> sourceComboBox = new ComboBox<>(nodes);
         ComboBox<String> targetComboBox = new ComboBox<>(nodes);
 

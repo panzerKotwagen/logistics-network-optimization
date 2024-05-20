@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -27,101 +26,28 @@ import java.util.List;
  */
 public class DrawPane extends Pane {
 
-    private final List<Point> pointList = new ArrayList<>();
-
-    private final List<Line> lineList = new ArrayList<>();
-
-    private final GraphicsContext graphicsContext;
-
-    private final Canvas canvas;
-
     public DrawPane() {
         setBackground(new Background(new BackgroundFill(Color.WHITESMOKE.brighter(), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        canvas = new Canvas(900, 600);
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                drapPoint(mouseEvent);
+        Canvas canvas = new Canvas(900, 600);
+        this.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+            if (!GraphEditActions.addNodeBtnIsPressed) {
+                return;
             }
-        });
 
-        graphicsContext = canvas.getGraphicsContext2D();
-        initGraphicsContext();
+            int x = (int) mouseEvent.getX();
+            int y = (int) mouseEvent.getY();
+            String nodeName = GraphEditActions.addNode();
+            buildAndAddNode(this, null, nodeName, x, y);
+
+            MyToolBar.addNodeBtn.setDisable(false);
+            GraphEditActions.addNodeBtnIsPressed = false;
+        });
 
         this.getChildren().add(canvas);
     }
 
-    private void drapPoint(MouseEvent mouseEvent) {
-        if (!GraphEditActions.addNodeBtnIsPressed) {
-            return;
-        }
-        int x = (int) mouseEvent.getX();
-        int y = (int) mouseEvent.getY();
-        System.out.println(x + " : " + y);
-        String nodeName = GraphEditActions.addNode();
-        if (nodeName != null) {
-            buildAndAddNode(this, null, nodeName, x, y);
-        }
-        MyToolBar.addNodeBtn.setDisable(false);
-        GraphEditActions.addNodeBtnIsPressed = false;
-    }
-
-    public void update() {
-        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for (Point point : pointList) {
-            drawPoint(point);
-        }
-    }
-
-    /**
-     * Draw a single point
-     *
-     * @param point point
-     */
-    public void drawPoint(Point point) {
-        double x = point.x;
-        double y = point.y;
-        int radius = point.radius;
-        double width = radius * 2;
-        Text text = new Text(x - point.name.length() * 6, y + 5, point.name);
-        text.setFont(new Font(20));
-        this.getChildren().add(text);
-        graphicsContext.strokeOval(x - radius, y - radius, width, width);
-    }
-
-    private void initGraphicsContext() {
-        graphicsContext.setStroke(Color.FORESTGREEN.brighter());
-        graphicsContext.setLineWidth(5);
-    }
-
-    public static class Point {
-
-        private final int radius = 30;
-
-        private final int x;
-
-        private final int y;
-
-        String name;
-
-        public Point(int x, int y, String name) {
-            this.x = x;
-            this.y = y;
-            this.name = name;
-        }
-    }
-
-
-    @Getter
-    public static class Line {
-
-        private Point source;
-
-        private Point target;
-    }
-
-    private static InfoNode buildAndAddNode(Pane root, InfoNode parentNode, String text, double x, double y) {
+    public static InfoNode buildAndAddNode(Pane root, InfoNode parentNode, String text, double x, double y) {
         InfoNode node = new InfoNode(text);
         node.setPosition(x, y);
         root.getChildren().add(node);
@@ -137,9 +63,9 @@ public class DrawPane extends Pane {
         return node;
     }
 
-    static class InfoNode extends StackPane {
+    public static class InfoNode extends StackPane {
 
-        private double PADDING = 8;
+        private static final double PADDING = 8;
 
         private double x;
 

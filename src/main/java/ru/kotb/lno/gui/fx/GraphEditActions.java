@@ -30,7 +30,7 @@ public class GraphEditActions {
      * Add node to the graph
      */
     public static String addNode() {
-        Optional<String> nodeName = addNodeDialog();
+        Optional<String> nodeName = invokeNodeDialog();
         if (nodeName.isEmpty()) {
             return null;
         }
@@ -39,7 +39,16 @@ public class GraphEditActions {
         return nodeName.get();
     }
 
-    public static void addEdge(EdgeDTO edge) {
+    /**
+     * Add edge to the graph
+     */
+    public static void addEdge() {
+        Optional<EdgeDTO> res = invokeEdgeDialog();
+        if (res.isEmpty()) {
+            return;
+        }
+
+        EdgeDTO edge = res.get();
         graph.addEdge(
                 edge.getSource(),
                 edge.getTarget(),
@@ -55,12 +64,21 @@ public class GraphEditActions {
      *
      * @return {@code Optional<String>} of name
      */
-    private static Optional<String> addNodeDialog() {
+    private static Optional<String> invokeNodeDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add node");
         dialog.setHeaderText("New node");
         dialog.setContentText("Name");
 
         return dialog.showAndWait();
+    }
+
+    /**
+     * Invoke dialog window to write info about edge
+     *
+     * @return {@code Optional<EdgeDTO>} of edge
+     */
+    private static Optional<EdgeDTO> invokeEdgeDialog() {
+        return new AddEdgeDialog().invoke();
     }
 }

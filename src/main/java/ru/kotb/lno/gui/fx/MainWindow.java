@@ -37,7 +37,8 @@ public class MainWindow extends Application {
 
         vb.getChildren().add(new MyMenuBar());
         vb.getChildren().add(new MyToolBar());
-        vb.getChildren().add(new DrawPane());
+        DrawPane drawPane = new DrawPane();
+        vb.getChildren().add(drawPane);
 
         Scene scene = new Scene(vb);
         stage.setScene(scene);
