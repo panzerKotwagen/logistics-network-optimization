@@ -1,4 +1,4 @@
-package ru.kotb.lno.gui.fx;
+package ru.kotb.lno.gui.fx.node;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import ru.kotb.lno.gui.fx.action.GraphEditActions;
 
 import java.util.HashSet;
 import java.util.Set;

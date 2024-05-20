@@ -1,9 +1,10 @@
-package ru.kotb.lno.gui.fx;
+package ru.kotb.lno.gui.fx.action;
 
 import javafx.scene.control.TextInputDialog;
 import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.impl.JGraphT;
+import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
 
 import java.util.Optional;
 import java.util.Set;

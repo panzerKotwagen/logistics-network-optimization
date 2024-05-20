@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import ru.kotb.lno.gui.fx.node.DrawPane;
+import ru.kotb.lno.gui.fx.node.MyMenuBar;
+import ru.kotb.lno.gui.fx.node.MyToolBar;
 
 
 /**
