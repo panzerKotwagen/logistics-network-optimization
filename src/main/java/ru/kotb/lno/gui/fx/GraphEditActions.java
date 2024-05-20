@@ -42,10 +42,11 @@ public class GraphEditActions {
     /**
      * Add edge to the graph
      */
-    public static void addEdge() {
+    //TODO: replace return type  with Optional
+    public static EdgeDTO addEdge() {
         Optional<EdgeDTO> res = invokeEdgeDialog();
         if (res.isEmpty()) {
-            return;
+            return null;
         }
 
         EdgeDTO edge = res.get();
@@ -57,6 +58,7 @@ public class GraphEditActions {
                 edge.getWeight2()
         );
         System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
+        return edge;
     }
 
     /**

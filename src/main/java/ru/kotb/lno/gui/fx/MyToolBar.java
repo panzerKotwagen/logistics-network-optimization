@@ -2,6 +2,7 @@ package ru.kotb.lno.gui.fx;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
+import ru.kotb.lno.dto.EdgeDTO;
 
 
 /**
@@ -11,12 +12,18 @@ public class MyToolBar extends ToolBar {
 
     public static Button addNodeBtn;
 
+    public static DrawPane drawPane;
+
     public MyToolBar() {
         addNodeBtn = new Button("Add node");
         Button addEdgeBtn = new Button("Add edge");
 
         addEdgeBtn.setOnAction(actionEvent -> {
-            GraphEditActions.addEdge();
+            EdgeDTO edgeDTO = GraphEditActions.addEdge();
+            assert edgeDTO != null;
+            DrawPane.InfoNode source = drawPane.getInfoNode(edgeDTO.getSource());
+            DrawPane.InfoNode target = drawPane.getInfoNode(edgeDTO.getTarget());
+            drawPane.buildAndAddLine(source, target);
         });
 
         addNodeBtn.setOnAction(actionEvent -> {
