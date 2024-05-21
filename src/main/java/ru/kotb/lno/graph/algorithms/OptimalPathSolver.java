@@ -21,6 +21,8 @@ import java.util.Set;
 public class OptimalPathSolver
         extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control> {
 
+    private final DijkstraShortestPath dijkstra = new DijkstraShortestPath();
+
     /**
      * A sheet with the maximum values of concessions at each step
      */
@@ -68,18 +70,27 @@ public class OptimalPathSolver
     /**
      * Initializes a variety of states, controls, etc.
      *
-     * @param graph         the graph in which you want to find the
-     *                      optimal route
-     * @param referencePath The shortest route according to one of the
-     *                      criteria for comparison at the algorithm step
+     * @param graph the graph in which you want to find the
+     *              optimal route
      */
-    public void init(Graph graph, List<String> referencePath,
-                     List<Double> compromiseList,
+    public void init(Graph graph, List<Double> compromiseList,
                      boolean isFirstCriteriaIsMoreImportant) {
 
         this.compromiseList = compromiseList;
         this.isFirstCriteriaIsMoreImportant = isFirstCriteriaIsMoreImportant;
         clear();
+
+        DijkstraShortestPath.Result w1Result = dijkstra.findShortestPath(graph, "S", 0);
+        DijkstraShortestPath.Result w2Result = dijkstra.findShortestPath(graph, "S", 1);
+
+        //The shortest route according to one of the criteria for
+        // comparison at the algorithm step
+        List<String> referencePath;
+        if (isFirstCriteriaIsMoreImportant) {
+            referencePath = dijkstra.restoreOptimalPath(w1Result.getPreviousNodeList(), "T");
+        } else {
+            referencePath = dijkstra.restoreOptimalPath(w2Result.getPreviousNodeList(), "T");
+        }
 
         // The number of stages in the task. It ss equal to the number
         // of edges in the optimal path

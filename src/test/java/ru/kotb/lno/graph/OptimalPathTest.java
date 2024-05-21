@@ -48,9 +48,7 @@ public class OptimalPathTest {
         DijkstraShortestPath.Result w1Result = optimalPath.findShortestPath(graph, "S", 0);
 
         List<Double> compomiseList = List.of(1d, 3d, 0d, 0d);
-        solver.init(graph,
-                optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"),
-                compomiseList, true);
+        solver.init(graph, compomiseList, true);
         List<String> optPath = solver.solve().getOptimalPath();
 
         List<String> expectedOptimalPath = List.of("S", "12", "22", "32", "T");
@@ -58,8 +56,7 @@ public class OptimalPathTest {
         Assertions.assertThat(optPath.equals(expectedOptimalPath)).isTrue();
 
         List<Double> compomiseList1 = List.of(1d, 0d, 3d, 5d);
-        solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"),
-                compomiseList1, true);
+        solver.init(graph, compomiseList1, true);
         List<String> optPath1 = solver.solve().getOptimalPath();
 
         List<String> expectedOptimalPath1 = List.of("S", "11", "22", "31", "T");
