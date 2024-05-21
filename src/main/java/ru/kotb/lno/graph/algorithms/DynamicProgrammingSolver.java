@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,15 +15,21 @@ import java.util.Set;
 
 public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgrammingSolver.State, DynamicProgrammingSolver.Control> {
 
-    Set<State> stateSet = new HashSet<>();
+    private Integer stageCount;
 
-    Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
+    private State startState;
 
-    Map<Integer, Weights> referenceStateControlSetMap = new HashMap<>();
+    private Set<State> stateSet = new HashSet<>();
 
-    Map<Integer, WinningAndControl> cacheW = new HashMap<>();
+    private Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
+
+    private Map<Integer, Weights> referenceStateControlSetMap = new HashMap<>();
+
+    private Map<Integer, WinningAndControl> cacheW = new HashMap<>();
 
     public void init(Graph graph, List<String> referencePath) {
+        stageCount = referencePath.size() - 1;
+
         for (String node : graph.nodeNamesSet()) {
             State state = new State(node);
             stateSet.add(state);
@@ -49,13 +56,14 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
             stateControlSetMap.put(state, controlSet);
         }
 
+        startState = new State(referencePath.get(0));
         for (int i = 1; i < referencePath.size(); i++) {
             Edge edge = graph.getEdge(referencePath.get(i - 1), referencePath.get(i));
             Weights weights = new Weights(edge.getWeights()[0], edge.getWeights()[1]);
             referenceStateControlSetMap.put(i - 1, weights);
         }
     }
-
+    
     @Override
     public double w(Integer stage, State state, Control control) {
         double referenceW1 = referenceStateControlSetMap.get(stage).w1;
@@ -76,7 +84,7 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
     }
 
     @Override
-    public WinningAndControl solve(State startState) {
+    public WinningAndControl solve() {
         return W(0, startState);
     }
 
@@ -94,7 +102,7 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
             State nextState = phi(state, control);
 
             Double Wi;
-            if (stage == referenceStateControlSetMap.size() - 1) {
+            if (stage == stageCount - 1) {
                 Wi = wi;
             } else {
                 Wi = wi + W(stage + 1, nextState).w;
@@ -111,6 +119,20 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
         return res;
     }
 
+    public List<String> restoreOptimalPath() {
+        List<String> optimalPath = new ArrayList<>();
+
+        State current = startState;
+        optimalPath.add(startState.nodeName);
+        for (int i = 0; i < stageCount; i++) {
+            WinningAndControl res = W(i, current);
+            optimalPath.add(res.control.target.nodeName);
+            Control control = res.control;
+            current = phi(current, control);
+        }
+
+        return optimalPath;
+    }
 
     private static class Weights {
 
