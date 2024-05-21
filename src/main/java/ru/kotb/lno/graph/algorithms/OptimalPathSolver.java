@@ -35,24 +35,24 @@ public class OptimalPathSolver
     /**
      * The set of the states. Corresponds to the vertices in the graph
      */
-    private Set<State> stateSet = new HashSet<>();
+    private final Set<State> stateSet = new HashSet<>();
 
     /**
      * Corresponds a set of possible controls to each state.
      * Control - an arc adjacent to the vertex
      */
-    private Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
+    private final Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
 
     /**
      * The shortest route according to one of the criteria for
      * comparison at the algorithm step
      */
-    private Map<Integer, Weights> referenceStateControlSetMap = new HashMap<>();
+    private final Map<Integer, Weights> referenceStateControlSetMap = new HashMap<>();
 
     /**
      * Memorization of calculated values
      */
-    private Map<Integer, WinningAndControl> cacheW = new HashMap<>();
+    private final Map<Integer, Map<State, WinningAndControl>> cacheW = new HashMap<>();
 
     /**
      * Initializes a variety of states, controls, etc.
@@ -100,14 +100,16 @@ public class OptimalPathSolver
     }
 
     @Override
-    public double w(Integer stage, State state, Control control) {
+    public Winnings w(Integer stage, State state, Control control) {
         double referenceW1 = referenceStateControlSetMap.get(stage).w1;
         double referenceW2 = referenceStateControlSetMap.get(stage).w2;
 
         double controlW1 = control.w1;
         double controlW2 = control.w2;
 
-        return referenceW1 - controlW1 + referenceW2 - controlW2;
+        double diff = referenceW1 - controlW1 + referenceW2 - controlW2;
+
+        return new Winnings(diff, controlW1, controlW2);
     }
 
     @Override
@@ -120,38 +122,43 @@ public class OptimalPathSolver
 
     @Override
     public List<String> solve() {
-        W(0, startState);
+        WinningAndControl winningAndControl = W(0, startState);
         return restoreOptimalPath();
     }
 
     @Override
     public WinningAndControl W(Integer stage, State state) {
-        if (cacheW.containsKey(state)) {
-            return cacheW.get(state);
+        if (cacheW.containsKey(stage)) {
+            if (cacheW.get(stage).containsKey(state)) {
+                return cacheW.get(stage).get(state);
+            }
         }
 
-        Double bestW = null;
+        Winnings bestW = null;
         Control bestControl = null;
 
         for (Control control : stateControlSetMap.get(state)) {
-            Double wi = w(stage, state, control);
+            Winnings wi = w(stage, state, control);
             State nextState = phi(state, control);
 
-            Double Wi;
+            Winnings Wi;
             if (stage == stageCount - 1) {
                 Wi = wi;
             } else {
-                Wi = wi + W(stage + 1, nextState).w;
+                Wi = wi.add(W(stage + 1, nextState).winnings);
             }
 
-            if (bestW == null || Wi > bestW) {
+            if (bestW == null || Wi.compareTo(bestW) > 0) {
                 bestW = Wi;
                 bestControl = control;
             }
         }
 
         WinningAndControl res = new WinningAndControl(bestW, bestControl);
-        cacheW.put(stage, res);
+        if (!cacheW.containsKey(stage)) {
+            cacheW.put(stage, new HashMap<>());
+        }
+        cacheW.get(stage).put(state, res);
         return res;
     }
 
@@ -175,6 +182,39 @@ public class OptimalPathSolver
         return optimalPath;
     }
 
+    @AllArgsConstructor
+    public static class Winnings implements Comparable<Winnings> {
+
+        Double difference;
+
+        Double w1;
+
+        Double w2;
+
+        public Winnings add(Winnings o) {
+            return new Winnings(
+                    this.difference + o.difference,
+                    this.w1 + o.w1,
+                    this.w2 + o.w2
+            );
+        }
+
+        @Override
+        public int compareTo(Winnings o) {
+            int res = Double.compare(this.difference, o.difference);
+            if (res != 0) {
+                return res;
+            }
+
+            if (this.w1 < o.w1) {
+                return 1;
+            }
+
+            return 0;
+        }
+    }
+
+
     private static class Weights {
 
         double w1;
@@ -191,7 +231,7 @@ public class OptimalPathSolver
     @AllArgsConstructor
     public static class WinningAndControl {
 
-        Double w;
+        Winnings winnings;
 
         Control control;
     }

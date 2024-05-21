@@ -17,7 +17,7 @@ public abstract class DynamicProgramming
      * @param control specified control for the state
      * @return local winnings in the form of a number
      */
-    public abstract double w(Integer stage, S state, C control);
+    public abstract <T> T w(Integer stage, S state, C control);
 
     /**
      * The function expressing a change in the state of the system under
