@@ -34,17 +34,27 @@ public class DijkstraShortestPath {
         }
     }
 
-    public Result findShortestPath(Graph graph, String firstNodeName, int weightNumber) {
+    /**
+     * Finds the shortest paths from the vertex {@code } to all the others in
+     * the graph by weight with the specified number
+     *
+     * @param graph        the graph in which the algorithm performs the work
+     * @param startNode    the vertex from which the distance is being searched
+     * @param weightNumber the number of the edge weight criterion
+     * @return a data structure with the shortest distance to all
+     * vertices with optimal paths in the form of a list of vertices
+     */
+    public Result findShortestPath(Graph graph, String startNode, int weightNumber) {
         Map<String, Double> distances = new LinkedHashMap<>();
         Map<String, String> previousNodeMap = new HashMap<>();
 
         for (String vertex : graph.nodeNamesSet()) {
             distances.put(vertex, Double.MAX_VALUE);
         }
-        distances.put(firstNodeName, 0d);
+        distances.put(startNode, 0d);
 
         Queue<NodeAndDistance> queue = new LinkedList<>();
-        queue.add(new NodeAndDistance(firstNodeName, 0d));
+        queue.add(new NodeAndDistance(startNode, 0d));
 
         while (!queue.isEmpty()) {
             NodeAndDistance current = queue.poll();
@@ -72,6 +82,14 @@ public class DijkstraShortestPath {
         return new Result(distances, previousNodeMap);
     }
 
+    /**
+     * Restores the optimal path to the vertex {@code node}
+     * and returns it as a list of vertices
+     *
+     * @param previousNodeMap map of vertices and the shortest vertices to them
+     * @param node            the vertex to which we restore the shortest path
+     * @return list of vertices
+     */
     public List<String> restoreOptimalPath(Map<String, String> previousNodeMap, String node) {
         List<String> path = new ArrayList<>();
         path.add(node);
