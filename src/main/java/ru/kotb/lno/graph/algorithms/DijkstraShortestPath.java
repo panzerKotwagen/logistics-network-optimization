@@ -1,13 +1,18 @@
 package ru.kotb.lno.graph.algorithms;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -29,8 +34,9 @@ public class DijkstraShortestPath {
         }
     }
 
-    public Map<String, Double> findShortestPath(Graph graph, String firstNodeName, int weightNumber) {
+    public Result findShortestPath(Graph graph, String firstNodeName, int weightNumber) {
         Map<String, Double> distances = new LinkedHashMap<>();
+        Map<String, String> previousNodeMap = new HashMap<>();
 
         for (String vertex : graph.nodeNamesSet()) {
             distances.put(vertex, Double.MAX_VALUE);
@@ -57,12 +63,27 @@ public class DijkstraShortestPath {
                 // any path we have found so far
                 if (distance < distances.get(neighbourNode)) {
                     distances.put(neighbourNode, distance);
+                    previousNodeMap.put(neighbourNode, current.node);
                     queue.add(new NodeAndDistance(neighbourNode, distance));
                 }
             }
         }
 
-        return distances;
+        return new Result(distances, previousNodeMap);
+    }
+
+    public List<String> restoreOptimalPath(Map<String, String> previousNodeMap, String node) {
+        List<String> path = new ArrayList<>();
+        path.add(node);
+
+        String current = node;
+        while (previousNodeMap.containsKey(current)) {
+            current = previousNodeMap.get(current);
+            path.add(current);
+        }
+
+        Collections.reverse(path);
+        return path;
     }
 
 
@@ -72,5 +93,19 @@ public class DijkstraShortestPath {
         public String node;
 
         public Double distance;
+    }
+
+
+    @Getter
+    public static class Result {
+
+        private final Map<String, Double> distances;
+
+        private final Map<String, String> previousNodeList;
+
+        private Result(Map<String, Double> distances, Map<String, String> previousNodeList) {
+            this.distances = distances;
+            this.previousNodeList = previousNodeList;
+        }
     }
 }
