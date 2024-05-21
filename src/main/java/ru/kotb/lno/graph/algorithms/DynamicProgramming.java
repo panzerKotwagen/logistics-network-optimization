@@ -31,17 +31,19 @@ public abstract class DynamicProgramming
 
     /**
      * The basic functional equation
-     * @param stage
-     * @param state
-     * @return
-     * @param <T>
+     *
+     * @param stage stage number
+     * @param state state
+     * @param <T>   return type
+     * @return result
      */
     public abstract <T> T W(Integer stage, S state);
 
     /**
+     * Solves the problem
      *
-     * @return
-     * @param <T>
+     * @param <T> return type
+     * @return result
      */
     public abstract <T> T solve();
 

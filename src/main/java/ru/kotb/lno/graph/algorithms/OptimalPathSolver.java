@@ -13,20 +13,55 @@ import java.util.Objects;
 import java.util.Set;
 
 
-public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgrammingSolver.State, DynamicProgrammingSolver.Control> {
+/**
+ * A class for solving the problem of finding the optimal path in
+ * a graph with two criteria
+ */
+public class OptimalPathSolver
+        extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control> {
 
+    /**
+     * The number of stages in the task. It ss equal to the number of
+     * edges in the optimal path
+     */
     private Integer stageCount;
 
+    /**
+     * The starting state. Corresponds to the vertex from which the
+     * path is being searched
+     */
     private State startState;
 
+    /**
+     * The set of the states. Corresponds to the vertices in the graph
+     */
     private Set<State> stateSet = new HashSet<>();
 
+    /**
+     * Corresponds a set of possible controls to each state.
+     * Control - an arc adjacent to the vertex
+     */
     private Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
 
+    /**
+     * The shortest route according to one of the criteria for
+     * comparison at the algorithm step
+     */
     private Map<Integer, Weights> referenceStateControlSetMap = new HashMap<>();
 
+    /**
+     * Memorization of calculated values
+     */
     private Map<Integer, WinningAndControl> cacheW = new HashMap<>();
 
+    /**
+     * Initializes a variety of states, controls, etc.
+     *
+     * @param graph         the graph in which you want to find the
+     *                      optimal route
+     * @param referencePath The shortest route according to one of the
+     *                      criteria for comparison at the algorithm step
+     */
     public void init(Graph graph, List<String> referencePath) {
         stageCount = referencePath.size() - 1;
 
@@ -63,7 +98,7 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
             referenceStateControlSetMap.put(i - 1, weights);
         }
     }
-    
+
     @Override
     public double w(Integer stage, State state, Control control) {
         double referenceW1 = referenceStateControlSetMap.get(stage).w1;
@@ -84,8 +119,9 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
     }
 
     @Override
-    public WinningAndControl solve() {
-        return W(0, startState);
+    public List<String> solve() {
+        W(0, startState);
+        return restoreOptimalPath();
     }
 
     @Override
@@ -119,7 +155,12 @@ public class DynamicProgrammingSolver extends DynamicProgramming<DynamicProgramm
         return res;
     }
 
-    public List<String> restoreOptimalPath() {
+    /**
+     * Restores the optimal route
+     *
+     * @return the route in the form of a sequence of vertices names
+     */
+    private List<String> restoreOptimalPath() {
         List<String> optimalPath = new ArrayList<>();
 
         State current = startState;
