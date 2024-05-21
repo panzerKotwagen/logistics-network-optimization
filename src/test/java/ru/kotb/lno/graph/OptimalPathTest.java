@@ -75,5 +75,13 @@ public class OptimalPathTest {
         List<String> expectedOptimalPath = List.of("S", "12", "22", "32", "T");
 
         Assertions.assertThat(optPath.equals(expectedOptimalPath)).isTrue();
+
+        solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"));
+        solver.setFirstCriteriaIsMoreImportant(false);
+        List<String> optPath1 = solver.solve().getOptimalPath();
+
+        List<String> expectedOptimalPath1 = List.of("S", "11", "21", "31", "T");
+
+        Assertions.assertThat(optPath1.equals(expectedOptimalPath1)).isTrue();
     }
 }

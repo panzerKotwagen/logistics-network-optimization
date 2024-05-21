@@ -2,6 +2,7 @@ package ru.kotb.lno.graph.algorithms;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
@@ -21,6 +22,8 @@ import java.util.Set;
 public class OptimalPathSolver
         extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control> {
 
+    @Setter
+    private boolean isFirstCriteriaIsMoreImportant = true;
 
     /**
      * The set of the states. Corresponds to the vertices in the graph
@@ -65,6 +68,8 @@ public class OptimalPathSolver
      *                      criteria for comparison at the algorithm step
      */
     public void init(Graph graph, List<String> referencePath) {
+        clear();
+
         // The number of stages in the task. It ss equal to the number
         // of edges in the optimal path
         stageCount = referencePath.size() - 1;
@@ -101,6 +106,16 @@ public class OptimalPathSolver
             Weights weights = new Weights(edge.getWeights()[0], edge.getWeights()[1]);
             referenceStateControlSetMap.put(i - 1, weights);
         }
+    }
+
+    /**
+     * Cleat all the collection
+     */
+    private void clear() {
+        stateSet.clear();
+        stateControlSetMap.clear();
+        referenceStateControlSetMap.clear();
+        cacheW.clear();
     }
 
     @Override
@@ -146,7 +161,7 @@ public class OptimalPathSolver
                 optimalWi = wi.add(W(stage + 1, nextState).winnings);
             }
 
-            if (bestW == null || optimalWi.compareTo(bestW) > 0) {
+            if (bestW == null || compare(optimalWi, bestW) > 0) {
                 bestW = optimalWi;
                 bestControl = control;
             }
@@ -185,6 +200,29 @@ public class OptimalPathSolver
         WinningAndControl winningAndControl = W(0, startState);
         List<String> optPath = restoreOptimalPath();
         return new Result(winningAndControl, optPath);
+    }
+
+    /**
+     * Compares two values of the gain by the amount of the concession.
+     * If these values are equal, then the value of a more weighty
+     * criterion is compared.
+     *
+     * @param win1 first winnings
+     * @param win2 second winnings
+     * @return a negative integer, zero, or a positive integer as this object
+     * is worse than, equal to, or better than the specified object
+     */
+    private int compare(Winnings win1, Winnings win2) {
+        int res = Double.compare(win1.difference, win2.difference);
+        if (res != 0) {
+            return res;
+        }
+
+        if (win1.w1 < win2.w1) {
+            return (isFirstCriteriaIsMoreImportant) ? 1 : -1;
+        }
+
+        return 0;
     }
 
     /**
