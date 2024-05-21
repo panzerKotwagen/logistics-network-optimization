@@ -30,7 +30,8 @@ public abstract class DynamicProgramming
     public abstract S phi(S state, C control);
 
     /**
-     * The basic functional equation
+     * The conditional optimal winnings at all steps from the
+     * {@code stage} to the last
      *
      * @param stage stage number
      * @param state state

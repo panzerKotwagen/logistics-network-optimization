@@ -33,7 +33,7 @@ public class OptimalPathTest {
         DijkstraShortestPath.Result w1Result = optimalPath.findShortestPath(graph, "S", 0);
         solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"));
 
-        List<String> optPath = solver.solve();
+        List<String> optPath = solver.solve().getOptimalPath();
 
         List<String> expectedOptimalPath = List.of("S", "11", "T");
 
@@ -70,7 +70,7 @@ public class OptimalPathTest {
 
         DijkstraShortestPath.Result w1Result = optimalPath.findShortestPath(graph, "S", 0);
         solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"));
-        List<String> optPath = solver.solve();
+        List<String> optPath = solver.solve().getOptimalPath();
 
         List<String> expectedOptimalPath = List.of("S", "12", "22", "32", "T");
 

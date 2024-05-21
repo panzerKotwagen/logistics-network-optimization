@@ -1,6 +1,7 @@
 package ru.kotb.lno.graph.algorithms;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
@@ -20,17 +21,6 @@ import java.util.Set;
 public class OptimalPathSolver
         extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control> {
 
-    /**
-     * The number of stages in the task. It ss equal to the number of
-     * edges in the optimal path
-     */
-    private Integer stageCount;
-
-    /**
-     * The starting state. Corresponds to the vertex from which the
-     * path is being searched
-     */
-    private State startState;
 
     /**
      * The set of the states. Corresponds to the vertices in the graph
@@ -39,7 +29,7 @@ public class OptimalPathSolver
 
     /**
      * Corresponds a set of possible controls to each state.
-     * Control - an arc adjacent to the vertex
+     * Control - an arc adjacent to the node
      */
     private final Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
 
@@ -55,6 +45,18 @@ public class OptimalPathSolver
     private final Map<Integer, Map<State, WinningAndControl>> cacheW = new HashMap<>();
 
     /**
+     * The number of stages in the task. It ss equal to the number of
+     * edges in the optimal path
+     */
+    private Integer stageCount;
+
+    /**
+     * The starting state. Corresponds to the node from which the
+     * path is being searched
+     */
+    private State startState;
+
+    /**
      * Initializes a variety of states, controls, etc.
      *
      * @param graph         the graph in which you want to find the
@@ -63,13 +65,15 @@ public class OptimalPathSolver
      *                      criteria for comparison at the algorithm step
      */
     public void init(Graph graph, List<String> referencePath) {
+        // The number of stages in the task. It ss equal to the number
+        // of edges in the optimal path
         stageCount = referencePath.size() - 1;
 
         for (String node : graph.nodeNamesSet()) {
             State state = new State(node);
             stateSet.add(state);
 
-            //Form a set of possible controls for this condition
+            //Form a set of possible controls for this state
             Set<Control> controlSet = new HashSet<>();
             for (Edge edge : graph.getEdges(node)) {
                 State targetState = new State(graph.getOppositeNode(edge, node));
@@ -121,12 +125,6 @@ public class OptimalPathSolver
     }
 
     @Override
-    public List<String> solve() {
-        WinningAndControl winningAndControl = W(0, startState);
-        return restoreOptimalPath();
-    }
-
-    @Override
     public WinningAndControl W(Integer stage, State state) {
         if (cacheW.containsKey(stage)) {
             if (cacheW.get(stage).containsKey(state)) {
@@ -141,15 +139,15 @@ public class OptimalPathSolver
             Winnings wi = w(stage, state, control);
             State nextState = phi(state, control);
 
-            Winnings Wi;
+            Winnings optimalWi;
             if (stage == stageCount - 1) {
-                Wi = wi;
+                optimalWi = wi;
             } else {
-                Wi = wi.add(W(stage + 1, nextState).winnings);
+                optimalWi = wi.add(W(stage + 1, nextState).winnings);
             }
 
-            if (bestW == null || Wi.compareTo(bestW) > 0) {
-                bestW = Wi;
+            if (bestW == null || optimalWi.compareTo(bestW) > 0) {
+                bestW = optimalWi;
                 bestControl = control;
             }
         }
@@ -181,6 +179,82 @@ public class OptimalPathSolver
 
         return optimalPath;
     }
+
+    @Override
+    public Result solve() {
+        WinningAndControl winningAndControl = W(0, startState);
+        List<String> optPath = restoreOptimalPath();
+        return new Result(winningAndControl, optPath);
+    }
+
+    /**
+     * State corresponding to the graph node
+     */
+    @AllArgsConstructor
+    public static class State extends AbstractState {
+
+        /**
+         * The node name
+         */
+        private String nodeName;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof State state))
+                return false;
+            return nodeName.equals(state.nodeName);
+        }
+
+        @Override
+        public int hashCode() {
+            return nodeName.hashCode();
+        }
+    }
+
+
+    /**
+     * Control corresponding to the selected edge
+     */
+    @AllArgsConstructor
+    public static class Control extends AbstractControl {
+
+        /**
+         * Previous state
+         */
+        private State source;
+
+        /**
+         * Next state
+         */
+        private State target;
+
+        /**
+         * first weight of the edge
+         */
+        private double w1;
+
+        /**
+         * second weight of the edge
+         */
+        private double w2;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Control control)) return false;
+            return Double.compare(w1, control.w1) == 0
+                    && Double.compare(w2, control.w2) == 0
+                    && source.equals(control.source)
+                    && target.equals(control.target);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(source, target, w1, w2);
+        }
+    }
+
 
     @AllArgsConstructor
     public static class Winnings implements Comparable<Winnings> {
@@ -215,19 +289,9 @@ public class OptimalPathSolver
     }
 
 
-    private static class Weights {
-
-        double w1;
-
-        double w2;
-
-        public Weights(double... weights) {
-            w1 = weights[0];
-            w2 = weights[1];
-        }
-    }
-
-
+    /**
+     * The value of winning with optimal control
+     */
     @AllArgsConstructor
     public static class WinningAndControl {
 
@@ -237,50 +301,31 @@ public class OptimalPathSolver
     }
 
 
+    /**
+     * The structure for returning the result of solving the problem
+     */
     @AllArgsConstructor
-    public static class State extends AbstractState {
+    @Getter
+    public static class Result {
 
-        private String nodeName;
+        private WinningAndControl winningAndControl;
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof State state))
-                return false;
-            return nodeName.equals(state.nodeName);
-        }
-
-        @Override
-        public int hashCode() {
-            return nodeName.hashCode();
-        }
+        /**
+         * A path in the form of a list of vertices
+         */
+        private List<String> optimalPath;
     }
 
 
-    @AllArgsConstructor
-    public static class Control extends AbstractControl {
+    private static class Weights {
 
-        private State source;
+        double w1;
 
-        private State target;
+        double w2;
 
-        private double w1;
-
-        private double w2;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Control control)) return false;
-            return Double.compare(w1, control.w1) == 0
-                    && Double.compare(w2, control.w2) == 0
-                    && source.equals(control.source)
-                    && target.equals(control.target);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(source, target, w1, w2);
+        public Weights(double... weights) {
+            w1 = weights[0];
+            w2 = weights[1];
         }
     }
 }
