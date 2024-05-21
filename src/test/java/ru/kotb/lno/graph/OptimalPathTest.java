@@ -19,29 +19,6 @@ public class OptimalPathTest {
 
     @Test
     void findOptimalPath() {
-        String[] nodes = {"S", "11", "12", "T"};
-        for (String node : nodes) {
-            graph.addNode(node);
-        }
-
-        graph.addEdge("S", "11", "", 5, 7);
-        graph.addEdge("S", "12", "", 6, 3);
-
-        graph.addEdge("11", "T", "", 5, 10);
-        graph.addEdge("12", "T", "", 9, 13);
-
-        DijkstraShortestPath.Result w1Result = optimalPath.findShortestPath(graph, "S", 0);
-        solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"));
-
-        List<String> optPath = solver.solve().getOptimalPath();
-
-        List<String> expectedOptimalPath = List.of("S", "11", "T");
-
-        Assertions.assertThat(optPath.equals(expectedOptimalPath)).isTrue();
-    }
-
-    @Test
-    void findOptimalPath1() {
         String[] nodes = {"S", "11", "12", "21", "22", "23", "31", "32", "T"};
         for (String node : nodes) {
             graph.addNode(node);
@@ -69,18 +46,23 @@ public class OptimalPathTest {
         graph.addEdge("32", "T", "", 5, 10);
 
         DijkstraShortestPath.Result w1Result = optimalPath.findShortestPath(graph, "S", 0);
-        solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"));
+
+        List<Double> compomiseList = List.of(1d, 3d, 0d, 0d);
+        solver.init(graph,
+                optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"),
+                compomiseList, true);
         List<String> optPath = solver.solve().getOptimalPath();
 
         List<String> expectedOptimalPath = List.of("S", "12", "22", "32", "T");
 
         Assertions.assertThat(optPath.equals(expectedOptimalPath)).isTrue();
 
-        solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"));
-        solver.setFirstCriteriaIsMoreImportant(false);
+        List<Double> compomiseList1 = List.of(1d, 0d, 3d, 5d);
+        solver.init(graph, optimalPath.restoreOptimalPath(w1Result.getPreviousNodeList(), "T"),
+                compomiseList1, true);
         List<String> optPath1 = solver.solve().getOptimalPath();
 
-        List<String> expectedOptimalPath1 = List.of("S", "11", "21", "31", "T");
+        List<String> expectedOptimalPath1 = List.of("S", "11", "22", "31", "T");
 
         Assertions.assertThat(optPath1.equals(expectedOptimalPath1)).isTrue();
     }

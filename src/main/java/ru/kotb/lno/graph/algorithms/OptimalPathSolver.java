@@ -2,7 +2,6 @@ package ru.kotb.lno.graph.algorithms;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
@@ -22,7 +21,14 @@ import java.util.Set;
 public class OptimalPathSolver
         extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control> {
 
-    @Setter
+    /**
+     * A sheet with the maximum values of concessions at each step
+     */
+    private List<Double> compromiseList = List.of(0d, 0d, 0d, 0d);
+
+    /**
+     *
+     */
     private boolean isFirstCriteriaIsMoreImportant = true;
 
     /**
@@ -67,7 +73,12 @@ public class OptimalPathSolver
      * @param referencePath The shortest route according to one of the
      *                      criteria for comparison at the algorithm step
      */
-    public void init(Graph graph, List<String> referencePath) {
+    public void init(Graph graph, List<String> referencePath,
+                     List<Double> compromiseList,
+                     boolean isFirstCriteriaIsMoreImportant) {
+
+        this.compromiseList = compromiseList;
+        this.isFirstCriteriaIsMoreImportant = isFirstCriteriaIsMoreImportant;
         clear();
 
         // The number of stages in the task. It ss equal to the number
@@ -109,7 +120,7 @@ public class OptimalPathSolver
     }
 
     /**
-     * Cleat all the collection
+     * Clear all the collections
      */
     private void clear() {
         stateSet.clear();
@@ -126,7 +137,12 @@ public class OptimalPathSolver
         double controlW1 = control.w1;
         double controlW2 = control.w2;
 
-        double diff = referenceW1 - controlW1 + referenceW2 - controlW2;
+        double diff;
+        if (isFirstCriteriaIsMoreImportant) {
+            diff = referenceW1 - controlW1;
+        } else {
+            diff = referenceW2 - controlW2;
+        }
 
         return new Winnings(diff, controlW1, controlW2);
     }
@@ -159,6 +175,10 @@ public class OptimalPathSolver
                 optimalWi = wi;
             } else {
                 optimalWi = wi.add(W(stage + 1, nextState).winnings);
+            }
+
+            if (optimalWi.difference < -compromiseList.get(stage)) {
+                optimalWi.w2 = Double.MAX_VALUE;
             }
 
             if (bestW == null || compare(optimalWi, bestW) > 0) {
@@ -213,16 +233,11 @@ public class OptimalPathSolver
      * is worse than, equal to, or better than the specified object
      */
     private int compare(Winnings win1, Winnings win2) {
-        int res = Double.compare(win1.difference, win2.difference);
-        if (res != 0) {
-            return res;
+        if (isFirstCriteriaIsMoreImportant) {
+            return -Double.compare(win1.w2, win2.w2);
+        } else {
+            return -Double.compare(win1.w1, win2.w1);
         }
-
-        if (win1.w1 < win2.w1) {
-            return (isFirstCriteriaIsMoreImportant) ? 1 : -1;
-        }
-
-        return 0;
     }
 
     /**
@@ -305,7 +320,7 @@ public class OptimalPathSolver
 
         public Winnings add(Winnings o) {
             return new Winnings(
-                    this.difference + o.difference,
+                    this.difference,
                     this.w1 + o.w1,
                     this.w2 + o.w2
             );
