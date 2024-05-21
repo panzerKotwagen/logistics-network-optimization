@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Solver {
+public class MultiCriteriaSolver {
 
     private CompromiseScheme scheme;
 

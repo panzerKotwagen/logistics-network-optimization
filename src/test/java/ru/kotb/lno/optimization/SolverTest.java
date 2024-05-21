@@ -10,7 +10,7 @@ import java.util.List;
 
 class SolverTest {
 
-    private final Solver solver = new Solver();
+    private final MultiCriteriaSolver solver = new MultiCriteriaSolver();
 
     private final Convolution convolutionCompromiseScheme
             = new Convolution(0.2, 1);
