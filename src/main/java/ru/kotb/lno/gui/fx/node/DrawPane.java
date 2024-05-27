@@ -37,6 +37,7 @@ public class DrawPane extends Pane {
 
             int x = (int) mouseEvent.getX();
             int y = (int) mouseEvent.getY();
+
             String nodeName = GraphEditActions.addNode();
             infoNodeSet.add(buildAndAddNode(nodeName, x, y));
 
@@ -45,6 +46,15 @@ public class DrawPane extends Pane {
         });
 
         this.getChildren().add(canvas);
+
+//        test();
+    }
+
+    private void test() {
+        String nodeName = GraphEditActions.addNode();
+        infoNodeSet.add(buildAndAddNode(nodeName, 250, 250));
+        String nodeName2 = GraphEditActions.addNode();
+        infoNodeSet.add(buildAndAddNode(nodeName2, 400, 150));
     }
 
     public InfoNode getInfoNode(String text) {
@@ -77,13 +87,29 @@ public class DrawPane extends Pane {
      * @param sourceNode source node
      * @param targetNode target node
      */
-    public void buildAndAddLine(InfoNode sourceNode, InfoNode targetNode) {
+    public void buildAndAddLine(InfoNode sourceNode, InfoNode targetNode, double w1, double w2) {
         javafx.scene.shape.Line line = new javafx.scene.shape.Line();
         line.startXProperty().bind(sourceNode.centerXProperty());
         line.startYProperty().bind(sourceNode.centerYProperty());
         line.endXProperty().bind(targetNode.centerXProperty());
         line.endYProperty().bind(targetNode.centerYProperty());
         this.getChildren().add(line);
+
+        double maxX = Math.max(line.getStartX(), line.getEndX());
+        double minX = Math.min(line.getStartX(), line.getEndX());
+
+        double maxY = Math.max(line.getStartY(), line.getEndY());
+        double minY = Math.min(line.getStartY(), line.getEndY());
+
+        double x = minX + (maxX - minX) / 2;
+        double y = minY + (maxY - minY) / 2 - 10;
+
+        String weightText = String.format("(%.1f, %.1f)", w1, w2);
+        Text text = new Text(weightText);
+        text.setLayoutX(x);
+        text.setLayoutY(y);
+        this.getChildren().add(text);
+
         line.toBack();
     }
 
@@ -99,7 +125,7 @@ public class DrawPane extends Pane {
 
         public InfoNode(String txt) {
             Text text = new Text(txt);
-            double size = getWidth(text) + (2 * PADDING);
+            double size = 10 + (2 * PADDING);
             setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";-fx-border-color:black;-fx-border-width:1px;-fx-background-color:yellow;");
             setMinSize(size, size);
             getChildren().add(text);
