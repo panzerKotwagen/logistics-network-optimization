@@ -2,7 +2,6 @@ package ru.kotb.lno.graph.algorithms;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
@@ -26,43 +25,14 @@ public class OptimalPathSolver
 
     private final DijkstraShortestPath dijkstra = new DijkstraShortestPath();
 
-    @Setter
     private int mainCriteriaIdx = 0;
 
-    /**
-     * A sheet with the maximum values of concessions at each step
-     */
-    @Setter
-    private Double globalCompromiseValue;
-
-
-    /**
-     * The set of the states. Corresponds to the vertices in the graph
-     */
-    private final Set<State> stateSet = new HashSet<>();
-
-    /**
-     * Corresponds a set of possible controls to each state.
-     * Control - an arc adjacent to the node
-     */
-    private final Map<State, Set<Control>> stateControlSetMap = new HashMap<>();
-
-    /**
-     * The shortest route according to one of the criteria for
-     * comparison at the algorithm step
-     */
-    private final Map<Integer, Double> referenceStateControlSetMap = new HashMap<>();
+    private double globalCompromiseValue;
 
     /**
      * Memorization of calculated values
      */
     private final Map<Integer, Map<State, Result>> cacheW = new HashMap<>();
-
-    /**
-     * The number of stages in the task. It ss equal to the number of
-     * edges in the optimal path
-     */
-    private Integer stageCount;
 
     /**
      * The starting state. Corresponds to the node from which the
@@ -74,72 +44,60 @@ public class OptimalPathSolver
 
     private State lastState;
 
-    /**
-     * Clear all the collections
-     */
     private void clear() {
-        stateSet.clear();
-        stateControlSetMap.clear();
-        referenceStateControlSetMap.clear();
         cacheW.clear();
         startState = null;
+        lastState = null;
+    }
+
+    public void setGlobalCompromiseValue(double globalCompromiseValue) {
+        this.globalCompromiseValue = globalCompromiseValue;
+        cacheW.clear();
     }
 
     /**
      * Initializes states and controls
-     *
-     * @param graph
-     * @param start
      */
     private void initStatesAndControls(Graph graph, String start) {
-        Deque<String> deque = new LinkedList<>();
-        Map<String, Integer> stateToStageNum = new HashMap<>();
-        Set<String> viewed = new HashSet<>();
-        stateToStageNum.put(start, 0);
-        deque.add(start);
+        Deque<State> deque = new LinkedList<>();
+        Set<State> viewed = new HashSet<>();
+        deque.add(new State(start));
 
         while (!deque.isEmpty()) {
-            String current = deque.pollFirst();
+            State current = deque.pollFirst();
             viewed.add(current);
-            int stageNumber = stateToStageNum.get(current);
-            State currentState = new State(current);
 
             Set<Control> controlSet = new HashSet<>();
-            for (Edge edge : graph.getAdjacentEdges(current)) {
-                String next = graph.getOppositeNode(edge, current);
+            for (Edge edge : graph.getAdjacentEdges(current.nodeName)) {
+                State next = new State(graph.getOppositeNode(edge, current.nodeName));
 
                 if (viewed.contains(next)) {
                     continue;
                 }
 
                 deque.add(next);
-                stateToStageNum.put(next, stageNumber + 1);
 
-                State nextState = new State(next);
-                Control control = new Control(edge, currentState, nextState);
+                Control control = new Control(edge, current, next);
                 controlSet.add(control);
             }
 
-            stateControlSetMap.put(currentState, controlSet);
+            current.controlSet = controlSet;
+
+            if (startState == null) {
+                startState = current;
+            }
         }
 
     }
 
-    private void initReferenceControls(Graph graph, String startNode, String lastNode, int mainCriteriaIdx) {
-        //The shortest route according to one of the criteria for
-        // comparison at the algorithm step
-        List<String> referencePath;
+    private void initMainCriteriaValue(Graph graph, String startNode, String lastNode, int mainCriteriaIdx) {
         if (mainCriteriaIdx == 0) {
             DijkstraShortestPath.Result w1Result = dijkstra.findShortestPath(graph, startNode, 0);
-            referencePath = dijkstra.restoreOptimalPath(w1Result.getPreviousNodeList(), lastNode);
             mainCriteriaValue = w1Result.getDistances().get(lastNode);
         } else {
             DijkstraShortestPath.Result w2Result = dijkstra.findShortestPath(graph, startNode, 1);
-            referencePath = dijkstra.restoreOptimalPath(w2Result.getPreviousNodeList(), lastNode);
             mainCriteriaValue = w2Result.getDistances().get(lastNode);
         }
-
-        stageCount = referencePath.size() - 1;
     }
 
     /**
@@ -149,22 +107,20 @@ public class OptimalPathSolver
      *              optimal route
      */
     public void init(Graph graph, String startNode, String lastNode, double globalCompromiseValue, int mainCriteriaIdx) {
-
         this.globalCompromiseValue = globalCompromiseValue;
         this.mainCriteriaIdx = mainCriteriaIdx;
 
         clear();
 
-        if (startState == null) {
-            startState = new State(startNode);
-        }
-        if (lastState == null) {
-            lastState = new State(lastNode);
-        }
+        lastState = new State(lastNode);
 
         initStatesAndControls(graph, startNode);
 
-        initReferenceControls(graph, startNode, lastNode, mainCriteriaIdx);
+        initMainCriteriaValue(graph, startNode, lastNode, mainCriteriaIdx);
+    }
+
+    private boolean isStateLast(State current) {
+        return current.nodeName.equals(lastState.nodeName);
     }
 
     @Override
@@ -192,7 +148,7 @@ public class OptimalPathSolver
         double bestW = Double.MAX_VALUE;
         Control bestControl = null;
 
-        for (Control control : stateControlSetMap.get(state)) {
+        for (Control control : state.controlSet) {
             double wi = w(stage, state, control);
             State nextState = phi(state, control);
 
@@ -202,7 +158,7 @@ public class OptimalPathSolver
             double optimalWi;
             if (nextState.mainCriteriaValue > mainCriteriaValue + globalCompromiseValue) {
                 optimalWi = Double.MAX_VALUE;
-            } else if (nextState.equals(lastState)) {
+            } else if (isStateLast(nextState)) {
                 optimalWi = wi;
             } else {
                 optimalWi = wi + W(stage + 1, nextState).win;
@@ -237,9 +193,10 @@ public class OptimalPathSolver
         List<String> optimalPath = new ArrayList<>();
 
         State current = startState;
+        int stageNum = 0;
         optimalPath.add(startState.nodeName);
-        for (int i = 0; i < stageCount; i++) {
-            Result res = W(i, current);
+        while (!isStateLast(current)) {
+            Result res = W(stageNum++, current);
             optimalPath.add(res.bestControl.nextState.nodeName);
             Control control = res.bestControl;
             current = phi(current, control);
@@ -258,16 +215,18 @@ public class OptimalPathSolver
 
         private double mainCriteriaValue;
 
+        private Set<Control> controlSet;
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof State state)) return false;
-            return Objects.equals(nodeName, state.nodeName);
+            return Double.compare(mainCriteriaValue, state.mainCriteriaValue) == 0 && Objects.equals(nodeName, state.nodeName);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(nodeName);
+            return Objects.hash(nodeName, mainCriteriaValue);
         }
 
         @Override
@@ -318,6 +277,7 @@ public class OptimalPathSolver
     @RequiredArgsConstructor
     public static class Result {
 
+        @Getter
         private final Double win;
 
         private final Control bestControl;

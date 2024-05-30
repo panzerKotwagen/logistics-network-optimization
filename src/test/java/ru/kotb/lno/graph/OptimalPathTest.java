@@ -2,11 +2,9 @@ package ru.kotb.lno.graph;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.kotb.lno.graph.algorithms.DijkstraShortestPath;
 import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
 import ru.kotb.lno.graph.impl.JGraphT;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -15,8 +13,6 @@ public class OptimalPathTest {
     private final Graph graph = new JGraphT();
 
     private final OptimalPathSolver solver = new OptimalPathSolver();
-
-    private final DijkstraShortestPath optimalPath = new DijkstraShortestPath();
 
     @Test
     void findOptimalPath() {
@@ -46,20 +42,22 @@ public class OptimalPathTest {
         graph.addEdge("31", "T", "", 10, 5);
         graph.addEdge("32", "T", "", 5, 10);
 
-        solver.init(graph, "S", "T", 4, 0);
-        OptimalPathSolver.Result res = solver.solve();
-        System.out.println(res);
-        List<String> optPath = solver.restoreOptimalPath();
-        System.out.println(optPath);
-        List<String> expectedOptimalPath = List.of("S", "12", "22", "32", "T");
-//        Assertions.assertThat(optPath.equals(expectedOptimalPath)).isTrue();
 
-        solver.init(graph, "S", "T", 9, 0);
-        OptimalPathSolver.Result res1 = solver.solve();
-        System.out.println(res1);
-        List<String> optPath1 = solver.restoreOptimalPath();
-        System.out.println(optPath1);
-        List<String> expectedOptimalPath1 = List.of("S", "11", "22", "31", "T");
-//        Assertions.assertThat(optPath1.equals(expectedOptimalPath1)).isTrue();
+        double[] globalCompromiseArray = new double[]{0, 5, 8, 11, 15};
+        double[] expectedWinArray = new double[]{26, 22, 19, 15, 11};
+
+        solver.init(graph, "S", "T", 8, 0);
+
+        for (int i = 0; i < globalCompromiseArray.length; i++) {
+            solver.setGlobalCompromiseValue(globalCompromiseArray[i]);
+
+            OptimalPathSolver.Result res = solver.solve();
+            List<String> optPath = solver.restoreOptimalPath();
+
+            System.out.println(res);
+            System.out.println(optPath);
+
+            Assertions.assertThat(res.getWin()).isEqualTo(expectedWinArray[i]);
+        }
     }
 }
