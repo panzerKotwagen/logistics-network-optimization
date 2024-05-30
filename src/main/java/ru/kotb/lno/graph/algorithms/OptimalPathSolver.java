@@ -1,6 +1,5 @@
 package ru.kotb.lno.graph.algorithms;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -34,7 +33,7 @@ public class OptimalPathSolver
      * A sheet with the maximum values of concessions at each step
      */
     @Setter
-    private List<Double> compromiseList;
+    private Double globalCompromiseValue;
 
 
     /**
@@ -71,25 +70,19 @@ public class OptimalPathSolver
      */
     private State startState;
 
-    private void DFS(Graph graph, String current, int stageNumber) {
-        State currentState = new State(current, stageNumber);
+    private Double mainCriteriaValue;
 
-        Set<Control> controlSet = new HashSet<>();
-        for (Edge edge : graph.getEdges(current)) {
+    private State lastState;
 
-            String next = graph.getOppositeNode(edge, current);
-
-            State nextState = new State(next, stageNumber + 1);
-
-            Control control = new Control(edge, currentState, nextState);
-            controlSet.add(control);
-
-            if (!stateSet.contains(nextState)) {
-                DFS(graph, next, stageNumber + 1);
-            }
-        }
-
-        stateControlSetMap.put(currentState, controlSet);
+    /**
+     * Clear all the collections
+     */
+    private void clear() {
+        stateSet.clear();
+        stateControlSetMap.clear();
+        referenceStateControlSetMap.clear();
+        cacheW.clear();
+        startState = null;
     }
 
     /**
@@ -109,11 +102,7 @@ public class OptimalPathSolver
             String current = deque.pollFirst();
             viewed.add(current);
             int stageNumber = stateToStageNum.get(current);
-            State currentState = new State(current, stageNumber);
-
-            if (startState == null) {
-                startState = currentState;
-            }
+            State currentState = new State(current);
 
             Set<Control> controlSet = new HashSet<>();
             for (Edge edge : graph.getAdjacentEdges(current)) {
@@ -126,7 +115,7 @@ public class OptimalPathSolver
                 deque.add(next);
                 stateToStageNum.put(next, stageNumber + 1);
 
-                State nextState = new State(next, stageNumber + 1);
+                State nextState = new State(next);
                 Control control = new Control(edge, currentState, nextState);
                 controlSet.add(control);
             }
@@ -136,24 +125,6 @@ public class OptimalPathSolver
 
     }
 
-    /**
-     * Initializes a variety of states, controls, etc.
-     *
-     * @param graph the graph in which you want to find the
-     *              optimal route
-     */
-    public void init(Graph graph, String startNode, String lastNode, List<Double> compromiseList, int mainCriteriaIdx) {
-
-        this.compromiseList = compromiseList;
-        this.mainCriteriaIdx = mainCriteriaIdx;
-
-        clear();
-
-        initStatesAndControls(graph, startNode);
-
-        initReferenceControls(graph, startNode, lastNode, mainCriteriaIdx);
-    }
-
     private void initReferenceControls(Graph graph, String startNode, String lastNode, int mainCriteriaIdx) {
         //The shortest route according to one of the criteria for
         // comparison at the algorithm step
@@ -161,28 +132,39 @@ public class OptimalPathSolver
         if (mainCriteriaIdx == 0) {
             DijkstraShortestPath.Result w1Result = dijkstra.findShortestPath(graph, startNode, 0);
             referencePath = dijkstra.restoreOptimalPath(w1Result.getPreviousNodeList(), lastNode);
+            mainCriteriaValue = w1Result.getDistances().get(lastNode);
         } else {
             DijkstraShortestPath.Result w2Result = dijkstra.findShortestPath(graph, startNode, 1);
             referencePath = dijkstra.restoreOptimalPath(w2Result.getPreviousNodeList(), lastNode);
-        }
-
-        for (int i = 1; i < referencePath.size(); i++) {
-            Edge edge = graph.getEdge(referencePath.get(i - 1), referencePath.get(i));
-            referenceStateControlSetMap.put(i - 1, edge.getWeights()[mainCriteriaIdx]);
+            mainCriteriaValue = w2Result.getDistances().get(lastNode);
         }
 
         stageCount = referencePath.size() - 1;
     }
 
     /**
-     * Clear all the collections
+     * Initializes a variety of states, controls, etc.
+     *
+     * @param graph the graph in which you want to find the
+     *              optimal route
      */
-    private void clear() {
-        stateSet.clear();
-        stateControlSetMap.clear();
-        referenceStateControlSetMap.clear();
-        cacheW.clear();
-        startState = null;
+    public void init(Graph graph, String startNode, String lastNode, double globalCompromiseValue, int mainCriteriaIdx) {
+
+        this.globalCompromiseValue = globalCompromiseValue;
+        this.mainCriteriaIdx = mainCriteriaIdx;
+
+        clear();
+
+        if (startState == null) {
+            startState = new State(startNode);
+        }
+        if (lastState == null) {
+            lastState = new State(lastNode);
+        }
+
+        initStatesAndControls(graph, startNode);
+
+        initReferenceControls(graph, startNode, lastNode, mainCriteriaIdx);
     }
 
     @Override
@@ -214,17 +196,13 @@ public class OptimalPathSolver
             double wi = w(stage, state, control);
             State nextState = phi(state, control);
 
-            double diff;
-            if (mainCriteriaIdx == 0) {
-                diff = referenceStateControlSetMap.get(stage) - control.edge.getWeights()[0];
-            } else {
-                diff = referenceStateControlSetMap.get(stage) - control.edge.getWeights()[1];
-            }
+            nextState.mainCriteriaValue = state.mainCriteriaValue
+                    + control.edge.getWeights()[mainCriteriaIdx];
 
             double optimalWi;
-            if (diff < -compromiseList.get(stage)) {
+            if (nextState.mainCriteriaValue > mainCriteriaValue + globalCompromiseValue) {
                 optimalWi = Double.MAX_VALUE;
-            } else if (stage == stageCount - 1) {
+            } else if (nextState.equals(lastState)) {
                 optimalWi = wi;
             } else {
                 optimalWi = wi + W(stage + 1, nextState).win;
@@ -245,12 +223,9 @@ public class OptimalPathSolver
         return res;
     }
 
-    @AllArgsConstructor
-    public static class Result {
-
-        private Double win;
-
-        private Control bestControl;
+    @Override
+    public Result solve() {
+        return W(0, startState);
     }
 
     /**
@@ -273,21 +248,15 @@ public class OptimalPathSolver
         return optimalPath;
     }
 
-    @Override
-    public Result solve() {
-        return W(0, startState);
-    }
-
     /**
      * State corresponding to the graph node
      */
-    @Getter
     @RequiredArgsConstructor
     public static class State extends AbstractState {
 
         private final String nodeName;
 
-        private final int stageNum;
+        private double mainCriteriaValue;
 
         @Override
         public boolean equals(Object o) {
@@ -298,7 +267,15 @@ public class OptimalPathSolver
 
         @Override
         public int hashCode() {
-            return Objects.hash(nodeName, stageNum);
+            return Objects.hash(nodeName);
+        }
+
+        @Override
+        public String toString() {
+            return "State{" +
+                    "nodeName='" + nodeName + '\'' +
+                    ", mainCriteriaValue=" + mainCriteriaValue +
+                    '}';
         }
     }
 
@@ -325,6 +302,31 @@ public class OptimalPathSolver
         @Override
         public int hashCode() {
             return Objects.hashCode(edge);
+        }
+
+        @Override
+        public String toString() {
+            return "Control{" +
+                    "edge=" + edge +
+                    ", prevState=" + prevState +
+                    ", nextState=" + nextState +
+                    '}';
+        }
+    }
+
+
+    @RequiredArgsConstructor
+    public static class Result {
+
+        private final Double win;
+
+        private final Control bestControl;
+
+        @Override
+        public String toString() {
+            return "Result{" +
+                    "win=" + win +
+                    '}';
         }
     }
 }
