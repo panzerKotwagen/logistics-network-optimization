@@ -25,31 +25,18 @@ import java.util.Set;
 /**
  * The panel for drawing the graph
  */
+@Getter
 public class DrawPane extends Pane {
 
-    @Getter
     Set<InfoNode> infoNodeSet = new HashSet<>();
 
+    Set<InfoEdge> infoEdgeSet = new HashSet<>();
+
     public DrawPane() {
-        setBackground(new Background(new BackgroundFill(Color.WHITESMOKE.brighter(), CornerRadii.EMPTY, Insets.EMPTY)));
+        setBackground(new Background(new BackgroundFill(
+                Color.WHITESMOKE.brighter(), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        Canvas canvas = new Canvas(900, 600);
-//        this.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
-//            if (!GraphEditActions.addNodeBtnIsPressed) {
-//                return;
-//            }
-//
-//            int x = (int) mouseEvent.getX();
-//            int y = (int) mouseEvent.getY();
-//
-//            String nodeName = GraphEditActions.addNode();
-//            infoNodeSet.add(drawNode(nodeName, x, y));
-//
-//            MyToolBar.addNodeBtn.setDisable(false);
-//            GraphEditActions.addNodeBtnIsPressed = false;
-//        });
-
-        this.getChildren().add(canvas);
+        this.getChildren().add(new Canvas(900, 600));
     }
 
     public InfoNode getInfoNode(String text) {
@@ -61,61 +48,44 @@ public class DrawPane extends Pane {
         return null;
     }
 
+    public void update() {
+        this.getChildren().clear();
+        this.getChildren().add(new Canvas(900, 600));
+
+        for (InfoNode infoNode : infoNodeSet) {
+            this.getChildren().add(infoNode);
+        }
+
+        for (InfoEdge infoEdge : infoEdgeSet) {
+            this.getChildren().add(infoEdge);
+            infoEdge.toBack();
+            this.getChildren().add(infoEdge.text);
+        }
+    }
+
     /**
      * Build and place new node
      *
      * @param text node text
      * @param x    x position of the node
      * @param y    y position of the node
-     * @return built node
      */
-    public InfoNode drawNode(String text, double x, double y) {
+    public void addNode(String text, double x, double y) {
         InfoNode node = new InfoNode(text);
-//        node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent mouseEvent) {
-//                node.getChildren().remove(0);
-//            }
-//        });
         node.setPosition(x, y);
-        this.getChildren().add(node);
-        return node;
+        infoNodeSet.add(node);
     }
 
     /**
      * Build and place line between two nodes
      *
-     * @param sourceNode source node
-     * @param targetNode target node
+     * @param source source node
+     * @param target target node
      */
-    public void drawLine(InfoNode sourceNode, InfoNode targetNode, double w1, double w2) {
-        javafx.scene.shape.Line line = new javafx.scene.shape.Line();
-        line.startXProperty().bind(sourceNode.centerXProperty());
-        line.startYProperty().bind(sourceNode.centerYProperty());
-        line.endXProperty().bind(targetNode.centerXProperty());
-        line.endYProperty().bind(targetNode.centerYProperty());
-        this.getChildren().add(line);
-
-        drawEdgeWeights(w1, w2, line);
-
-        line.toBack();
-    }
-
-    private void drawEdgeWeights(double w1, double w2, Line line) {
-        double maxX = Math.max(line.getStartX(), line.getEndX());
-        double minX = Math.min(line.getStartX(), line.getEndX());
-
-        double maxY = Math.max(line.getStartY(), line.getEndY());
-        double minY = Math.min(line.getStartY(), line.getEndY());
-
-        double x = minX + (maxX - minX) / 2;
-        double y = minY + (maxY - minY) / 2 - 10;
-
+    public void addEdge(InfoNode source, InfoNode target, double w1, double w2) {
         String weightText = String.format("(%.1f, %.1f)", w1, w2);
-        Text text = new Text(weightText);
-        text.setLayoutX(x);
-        text.setLayoutY(y);
-        this.getChildren().add(text);
+        InfoEdge line = new InfoEdge(source, target, weightText);
+        infoEdgeSet.add(line);
     }
 
     public static class InfoNode extends StackPane {
@@ -159,11 +129,41 @@ public class DrawPane extends Pane {
             setLayoutX(x - getWidth() / 2);
             setLayoutY(y - getHeight() / 2);
         }
+    }
 
-        private double getWidth(Text text) {
-            new Scene(new Group(text));
-            text.applyCss();
-            return text.getLayoutBounds().getWidth();
+
+    public static class InfoEdge extends Line {
+
+        private InfoNode source;
+
+        private InfoNode target;
+
+        private Text text;
+
+        public InfoEdge(InfoNode source, InfoNode target, String text) {
+            this.startXProperty().bind(source.centerXProperty());
+            this.startYProperty().bind(source.centerYProperty());
+            this.endXProperty().bind(target.centerXProperty());
+            this.endYProperty().bind(target.centerYProperty());
+
+            this.source = source;
+            this.target = target;
+            initText(text);
+        }
+
+        private void initText(String string) {
+            double maxX = Math.max(this.getStartX(), this.getEndX());
+            double minX = Math.min(this.getStartX(), this.getEndX());
+
+            double maxY = Math.max(this.getStartY(), this.getEndY());
+            double minY = Math.min(this.getStartY(), this.getEndY());
+
+            double x = minX + (maxX - minX) / 2;
+            double y = minY + (maxY - minY) / 2 - 10;
+
+            text = new Text(string);
+            text.setLayoutX(x);
+            text.setLayoutY(y);
         }
     }
 }

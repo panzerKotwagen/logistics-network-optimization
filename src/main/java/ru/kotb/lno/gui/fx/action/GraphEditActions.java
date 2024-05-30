@@ -73,9 +73,10 @@ public class GraphEditActions {
         int x = (int) mouseEvent.getX();
         int y = (int) mouseEvent.getY();
 
-        drawPane.getInfoNodeSet().add(drawPane.drawNode(name, x, y));
+        drawPane.addNode(name, x, y);
 
         MyToolBar.addNodeBtn.setDisable(false);
+        drawPane.update();
     }
 
     /**
@@ -108,8 +109,9 @@ public class GraphEditActions {
 
         DrawPane.InfoNode source = drawPane.getInfoNode(edge.getSource());
         DrawPane.InfoNode target = drawPane.getInfoNode(edge.getTarget());
-        drawPane.drawLine(source, target, edge.getWeight1(), edge.getWeight2());
+        drawPane.addEdge(source, target, edge.getWeight1(), edge.getWeight2());
 
         System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
+        drawPane.update();
     }
 }
