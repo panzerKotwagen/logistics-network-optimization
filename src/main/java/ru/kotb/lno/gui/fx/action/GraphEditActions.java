@@ -6,6 +6,7 @@ import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
+import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
 import ru.kotb.lno.gui.fx.node.DrawPane;
 import ru.kotb.lno.gui.fx.node.MyToolBar;
 
@@ -119,5 +120,9 @@ public class GraphEditActions {
 
             drawPane.removeNode(drawPane.getSelectedNode());
         }
+    }
+
+    public void optimize() {
+        new OptimizeDialog(this).init();
     }
 }
