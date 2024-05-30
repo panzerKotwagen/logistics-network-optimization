@@ -3,6 +3,7 @@ package ru.kotb.lno.gui.fx.node;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -26,9 +27,11 @@ import java.util.Set;
 @Getter
 public class DrawPane extends Pane {
 
-    Set<InfoNode> infoNodeSet = new HashSet<>();
+    private Set<InfoNode> infoNodeSet = new HashSet<>();
 
-    Set<InfoEdge> infoEdgeSet = new HashSet<>();
+    private Set<InfoEdge> infoEdgeSet = new HashSet<>();
+
+    private InfoNode selectedNode;
 
     public DrawPane() {
         setBackground(new Background(new BackgroundFill(
@@ -64,6 +67,22 @@ public class DrawPane extends Pane {
     public void addNode(String text, double x, double y) {
         InfoNode node = new InfoNode(text);
         node.setPosition(x, y);
+
+        node.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
+            if (selectedNode != null) {
+                selectedNode.setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
+                        "-fx-border-color:black;" +
+                        "-fx-border-width:2px;" +
+                        "-fx-background-color:yellow;");
+            }
+
+            selectedNode = node;
+            node.setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
+                    "-fx-border-color:black;" +
+                    "-fx-border-width:2px;" +
+                    "-fx-background-color:red;");
+        });
+
         infoNodeSet.add(node);
         update();
     }
@@ -72,6 +91,17 @@ public class DrawPane extends Pane {
         String weightText = String.format("(%.1f, %.1f)", w1, w2);
         InfoEdge line = new InfoEdge(source, target, weightText);
         infoEdgeSet.add(line);
+        update();
+    }
+
+    public void removeNode(InfoNode node) {
+        infoNodeSet.remove(node);
+        infoEdgeSet.removeIf(infoEdge -> infoEdge.source == node || infoEdge.target == node);
+        update();
+    }
+
+    public void removeEdge(InfoNode source, InfoNode target) {
+        infoEdgeSet.removeIf(infoEdge -> infoEdge.source == source || infoEdge.target == target);
         update();
     }
 

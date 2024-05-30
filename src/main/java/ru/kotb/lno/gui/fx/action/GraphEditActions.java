@@ -112,4 +112,10 @@ public class GraphEditActions {
 
         System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
     }
+
+    public void removeNode() {
+        if (drawPane.getInfoNodeSet() != null) {
+            drawPane.removeNode(drawPane.getSelectedNode());
+        }
+    }
 }

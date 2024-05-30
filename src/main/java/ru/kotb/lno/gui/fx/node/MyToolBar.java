@@ -15,6 +15,7 @@ import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
 public class MyToolBar extends ToolBar {
 
     public static Button addNodeBtn;
+    public static Button deleteNodeBtn;
 
     private final GraphEditActions actions;
 
@@ -24,7 +25,7 @@ public class MyToolBar extends ToolBar {
         Button addEdgeBtn = new Button("Add edge");
         Button shortestW1Btn = new Button("Add edge");
         Button shortestW2Btn = new Button("Add edge");
-        Button deleteNodeBtn = new Button("Remove node");
+        deleteNodeBtn = new Button("Remove node");
         Button deleteEdgeBtn = new Button("Remove edge");
         Button optimizeBtn = new Button("Optimize");
 
@@ -39,6 +40,10 @@ public class MyToolBar extends ToolBar {
 
         addNodeBtn.setOnAction(actionEvent -> {
             addNodeBtn.setDisable(true);
+        });
+
+        deleteNodeBtn.setOnAction(actionEvent -> {
+            actions.removeNode();
         });
 
         this.getItems().addAll(addNodeBtn, addEdgeBtn, deleteNodeBtn, deleteEdgeBtn, criteriaComboBOx, optimizeBtn);
