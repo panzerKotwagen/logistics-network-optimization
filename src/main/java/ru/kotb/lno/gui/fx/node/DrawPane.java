@@ -69,22 +69,23 @@ public class DrawPane extends Pane {
         node.setPosition(x, y);
 
         node.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> {
-            if (selectedNode != null) {
-                selectedNode.setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
-                        "-fx-border-color:black;" +
-                        "-fx-border-width:2px;" +
-                        "-fx-background-color:yellow;");
-            }
+            resetSelectedNode();
 
             selectedNode = node;
-            node.setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
-                    "-fx-border-color:black;" +
-                    "-fx-border-width:2px;" +
-                    "-fx-background-color:red;");
+            selectedNode.setBackground(new Background(
+                    new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         });
 
         infoNodeSet.add(node);
         update();
+    }
+
+    private void resetSelectedNode() {
+        if (selectedNode != null) {
+            selectedNode.setBackground(new Background(
+                    new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+            selectedNode = null;
+        }
     }
 
     public void addEdge(InfoNode source, InfoNode target, double w1, double w2) {
@@ -100,11 +101,7 @@ public class DrawPane extends Pane {
         update();
     }
 
-    public void removeEdge(InfoNode source, InfoNode target) {
-        infoEdgeSet.removeIf(infoEdge -> infoEdge.source == source || infoEdge.target == target);
-        update();
-    }
-
+    @Getter
     public static class InfoNode extends StackPane {
 
         private static final double PADDING = 8;
@@ -162,6 +159,7 @@ public class DrawPane extends Pane {
             this.startYProperty().bind(source.centerYProperty());
             this.endXProperty().bind(target.centerXProperty());
             this.endYProperty().bind(target.centerYProperty());
+            this.setStrokeWidth(5);
 
             this.source = source;
             this.target = target;

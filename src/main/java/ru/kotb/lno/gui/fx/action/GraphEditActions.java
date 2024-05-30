@@ -105,7 +105,6 @@ public class GraphEditActions {
                 edge.getWeight2()
         );
 
-
         DrawPane.InfoNode source = drawPane.getInfoNode(edge.getSource());
         DrawPane.InfoNode target = drawPane.getInfoNode(edge.getTarget());
         drawPane.addEdge(source, target, edge.getWeight1(), edge.getWeight2());
@@ -115,6 +114,9 @@ public class GraphEditActions {
 
     public void removeNode() {
         if (drawPane.getInfoNodeSet() != null) {
+            String removed = drawPane.getSelectedNode().getName();
+            graph.removeNode(removed);
+
             drawPane.removeNode(drawPane.getSelectedNode());
         }
     }
