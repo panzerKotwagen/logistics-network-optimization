@@ -25,7 +25,9 @@ public class OptimalPathSolver
 
     private final DijkstraShortestPath dijkstra = new DijkstraShortestPath();
 
-    private int mainCriteriaIdx = 0;
+    private final Graph graph;
+
+    private final int mainCriteriaIdx;
 
     private double globalCompromiseValue;
 
@@ -44,10 +46,16 @@ public class OptimalPathSolver
 
     private State lastState;
 
-    private void clear() {
-        cacheW.clear();
-        startState = null;
-        lastState = null;
+    public OptimalPathSolver(Graph graph, String startState, String lastState, int mainCriteriaIdx, double globalCompromiseValue) {
+        this.graph = graph;
+        this.mainCriteriaIdx = mainCriteriaIdx;
+        this.globalCompromiseValue = globalCompromiseValue;
+
+        init(startState, lastState);
+    }
+
+    public void setStartState(String startState) {
+        init(startState, lastState.nodeName);
     }
 
     public void setGlobalCompromiseValue(double globalCompromiseValue) {
@@ -58,10 +66,13 @@ public class OptimalPathSolver
     /**
      * Initializes states and controls
      */
-    private void initStatesAndControls(Graph graph, String start) {
+    private void initStatesAndControls(String start, String last) {
+        lastState = new State(last);
+        startState = new State(start);
+
         Deque<State> deque = new LinkedList<>();
         Set<State> viewed = new HashSet<>();
-        deque.add(new State(start));
+        deque.add(startState);
 
         while (!deque.isEmpty()) {
             State current = deque.pollFirst();
@@ -82,15 +93,15 @@ public class OptimalPathSolver
             }
 
             current.controlSet = controlSet;
-
-            if (startState == null) {
-                startState = current;
-            }
         }
 
+        if (!viewed.contains(lastState)) {
+            throw new RuntimeException("There is no path from " + start
+                    + " to " + last + " in the graph");
+        }
     }
 
-    private void initMainCriteriaValue(Graph graph, String startNode, String lastNode, int mainCriteriaIdx) {
+    private void initMainCriteriaValue(String startNode, String lastNode, int mainCriteriaIdx) {
         if (mainCriteriaIdx == 0) {
             DijkstraShortestPath.Result w1Result = dijkstra.findShortestPath(graph, startNode, 0);
             mainCriteriaValue = w1Result.getDistances().get(lastNode);
@@ -102,21 +113,11 @@ public class OptimalPathSolver
 
     /**
      * Initializes a variety of states, controls, etc.
-     *
-     * @param graph the graph in which you want to find the
-     *              optimal route
      */
-    public void init(Graph graph, String startNode, String lastNode, double globalCompromiseValue, int mainCriteriaIdx) {
-        this.globalCompromiseValue = globalCompromiseValue;
-        this.mainCriteriaIdx = mainCriteriaIdx;
-
-        clear();
-
-        lastState = new State(lastNode);
-
-        initStatesAndControls(graph, startNode);
-
-        initMainCriteriaValue(graph, startNode, lastNode, mainCriteriaIdx);
+    public void init(String startNode, String lastNode) {
+        cacheW.clear();
+        initStatesAndControls(startNode, lastNode);
+        initMainCriteriaValue(startNode, lastNode, mainCriteriaIdx);
     }
 
     private boolean isStateLast(State current) {
