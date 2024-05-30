@@ -106,6 +106,47 @@ public class OptimalPathTest {
     }
 
     @Test
+    void findOptimalPathFromAnyNode1() {
+        String[] nodes = {"S", "11", "12", "21", "T"};
+        for (String node : nodes) {
+            graph.addNode(node);
+        }
+
+        graph.addEdge("S", "11", "", 2, 1);
+        graph.addEdge("S", "12", "", 1, 2);
+
+        graph.addEdge("11", "T", "", 5, 4);
+
+        graph.addEdge("12", "21", "", 8, 2);
+
+        graph.addEdge("21", "T", "", 1, 1000);
+
+        double globalCompromise = 100;
+
+        OptimalPathSolver solver = new OptimalPathSolver(graph, "S", "T", 0, 0);
+
+        OptimalPathSolver.Result res = solver.solve();
+        List<String> optPath = solver.restoreOptimalPath();
+
+        System.out.println(res);
+        System.out.println(optPath);
+
+        Assertions.assertThat(res.getWin()).isEqualTo(5);
+
+
+        solver.setStartState("21");
+        solver.setGlobalCompromiseValue(globalCompromise);
+
+        res = solver.solve();
+        optPath = solver.restoreOptimalPath();
+
+        System.out.println(res);
+        System.out.println(optPath);
+
+        Assertions.assertThat(res.getWin()).isEqualTo(9);
+    }
+
+    @Test
     void throwExceptionWhenThereIsNoPathFromStartToLast() {
         String[] nodes = {"S", "11", "T"};
         for (String node : nodes) {

@@ -76,6 +76,11 @@ public class OptimalPathSolver
 
         while (!deque.isEmpty()) {
             State current = deque.pollFirst();
+
+            if (!deque.isEmpty() && isStateLast(current)) {
+                continue;
+            }
+
             viewed.add(current);
 
             Set<Control> controlSet = new HashSet<>();
@@ -114,7 +119,7 @@ public class OptimalPathSolver
     /**
      * Initializes a variety of states, controls, etc.
      */
-    public void init(String startNode, String lastNode) {
+    private void init(String startNode, String lastNode) {
         cacheW.clear();
         initStatesAndControls(startNode, lastNode);
         initMainCriteriaValue(startNode, lastNode, mainCriteriaIdx);
