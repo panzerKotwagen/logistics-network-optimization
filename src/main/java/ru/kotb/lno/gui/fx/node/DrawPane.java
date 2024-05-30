@@ -17,7 +17,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -54,12 +56,14 @@ public class DrawPane extends Pane {
         this.getChildren().add(new Canvas(900, 600));
 
         for (InfoNode infoNode : infoNodeSet) {
+            infoNode.changeColor(Color.YELLOW);
             this.getChildren().add(infoNode);
         }
 
         for (InfoEdge infoEdge : infoEdgeSet) {
             this.getChildren().add(infoEdge);
             infoEdge.toBack();
+            infoEdge.changeColor(Color.BLACK);
             this.getChildren().add(infoEdge.text);
         }
     }
@@ -89,6 +93,10 @@ public class DrawPane extends Pane {
     public void addEdge(InfoNode source, InfoNode target, double w1, double w2) {
         String weightText = String.format("(%.1f, %.1f)", w1, w2);
         InfoEdge line = new InfoEdge(source, target, weightText);
+
+        source.getEdgeList().add(line);
+        target.getEdgeList().add(line);
+
         infoEdgeSet.add(line);
         update();
     }
@@ -97,6 +105,16 @@ public class DrawPane extends Pane {
         infoNodeSet.remove(node);
         infoEdgeSet.removeIf(infoEdge -> infoEdge.source == node || infoEdge.target == node);
         update();
+    }
+
+    public InfoEdge getEdge(InfoNode source, InfoNode target) {
+        for (InfoEdge edge : infoEdgeSet) {
+            if (edge.source == source && edge.target == target
+                    || edge.target == source && edge.source == target) {
+                return edge;
+            }
+        }
+        return null;
     }
 
     @Getter
@@ -109,6 +127,8 @@ public class DrawPane extends Pane {
         private double x;
 
         private double y;
+
+        private List<InfoEdge> edgeList = new ArrayList<>();
 
         public InfoNode(String txt) {
             Text text = new Text(txt);
@@ -149,6 +169,7 @@ public class DrawPane extends Pane {
     }
 
 
+    @Getter
     public static class InfoEdge extends Line {
 
         private InfoNode source;
@@ -182,6 +203,10 @@ public class DrawPane extends Pane {
             text = new Text(string);
             text.setLayoutX(x);
             text.setLayoutY(y);
+        }
+
+        public void changeColor(Color color) {
+            this.setStroke(color);
         }
     }
 }

@@ -131,6 +131,7 @@ public class GraphEditActions {
         if (settingsOptional.isEmpty()) {
             return;
         }
+
         SettingsDTO settings = settingsOptional.get();
         OptimalPathSolver solver = new OptimalPathSolver(
                 graph, settings.getStart(), settings.getEnd(), settings.getMainCriteriaNum(), settings.getConcessionValue());
@@ -138,9 +139,38 @@ public class GraphEditActions {
         solver.solve();
         List<String> optPath = solver.restoreOptimalPath();
 
+        DrawPane.InfoNode startNode = null;
         for (DrawPane.InfoNode infoNode : drawPane.getInfoNodeSet()) {
-            if (optPath.contains(infoNode.getName())) {
-                infoNode.changeColor(Color.GREEN);
+            if (optPath.get(0).equals(infoNode.getName())) {
+                startNode = infoNode;
+                startNode.changeColor(Color.GREEN);
+                break;
+            }
+        }
+
+        if (startNode == null) {
+            return;
+        }
+
+        for (int i = 1; i < optPath.size(); i++) {
+            String source = optPath.get(i - 1);
+            String target = optPath.get(i);
+
+            for (DrawPane.InfoEdge edge : startNode.getEdgeList()) {
+                String s = edge.getSource().getName();
+                String t = edge.getTarget().getName();
+
+                if (s.equals(source) && t.equals(target)
+                        || s.equals(target) && t.equals(source)) {
+                    edge.changeColor(Color.GREEN);
+                    if (startNode == edge.getSource()) {
+                        startNode = edge.getTarget();
+                    } else {
+                        startNode = edge.getSource();
+                    }
+                    startNode.changeColor(Color.GREEN);
+                    break;
+                }
             }
         }
     }

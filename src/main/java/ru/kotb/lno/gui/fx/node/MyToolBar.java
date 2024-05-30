@@ -26,6 +26,8 @@ public class MyToolBar extends ToolBar {
         deleteNodeBtn = new Button("Remove node");
         Button deleteEdgeBtn = new Button("Remove edge");
         Button optimizeBtn = new Button("Optimize");
+        Button update = new Button("Update");
+        Button clear = new Button("Clear");
 
         optimizeBtn.setOnAction((e) -> actions.optimize());
 
