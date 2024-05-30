@@ -45,22 +45,18 @@ public class OptimalPathTest {
         graph.addEdge("31", "T", "", 10, 5);
         graph.addEdge("32", "T", "", 5, 10);
 
-        DijkstraShortestPath.Result w1Result = optimalPath.findShortestPath(graph, "S", 0);
-
         List<Double> compomiseList = List.of(1d, 3d, 0d, 0d);
-        solver.init(graph, compomiseList, true);
-        List<String> optPath = solver.solve().getOptimalPath();
-
+        solver.init(graph, "S", "T", compomiseList, 0);
+        solver.solve();
+        List<String> optPath = solver.restoreOptimalPath();
         List<String> expectedOptimalPath = List.of("S", "12", "22", "32", "T");
-
         Assertions.assertThat(optPath.equals(expectedOptimalPath)).isTrue();
 
         List<Double> compomiseList1 = List.of(1d, 0d, 3d, 5d);
-        solver.init(graph, compomiseList1, true);
-        List<String> optPath1 = solver.solve().getOptimalPath();
-
+        solver.init(graph, "S", "T", compomiseList1, 0);
+        solver.solve();
+        List<String> optPath1 = solver.restoreOptimalPath();
         List<String> expectedOptimalPath1 = List.of("S", "11", "22", "31", "T");
-
         Assertions.assertThat(optPath1.equals(expectedOptimalPath1)).isTrue();
     }
 }

@@ -7,7 +7,7 @@ package ru.kotb.lno.graph.algorithms;
  * @param <C> control class
  */
 public abstract class DynamicProgramming
-        <S extends DynamicProgramming.AbstractState, C extends DynamicProgramming.AbstractControl> {
+        <S extends DynamicProgramming.AbstractState, C extends DynamicProgramming.AbstractControl, W, R> {
 
     /**
      * Calculates local winnings
@@ -17,7 +17,7 @@ public abstract class DynamicProgramming
      * @param control specified control for the state
      * @return local winnings in the form of a number
      */
-    public abstract <T> T w(Integer stage, S state, C control);
+    public abstract W w(Integer stage, S state, C control);
 
     /**
      * The function expressing a change in the state of the system under
@@ -35,18 +35,16 @@ public abstract class DynamicProgramming
      *
      * @param stage stage number
      * @param state state
-     * @param <T>   return type
      * @return result
      */
-    public abstract <T> T W(Integer stage, S state);
+    public abstract R W(Integer stage, S state);
 
     /**
      * Solves the problem
      *
-     * @param <T> return type
      * @return result
      */
-    public abstract <T> T solve();
+    public abstract R solve();
 
     /**
      * An abstract class describing the state of the system

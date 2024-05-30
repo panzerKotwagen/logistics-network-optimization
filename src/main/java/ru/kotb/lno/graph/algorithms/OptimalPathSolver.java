@@ -2,12 +2,16 @@ package ru.kotb.lno.graph.algorithms;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,19 +23,19 @@ import java.util.Set;
  * a graph with two criteria
  */
 public class OptimalPathSolver
-        extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control> {
+        extends DynamicProgramming<OptimalPathSolver.State, OptimalPathSolver.Control, Double, OptimalPathSolver.Result> {
 
     private final DijkstraShortestPath dijkstra = new DijkstraShortestPath();
+
+    @Setter
+    private int mainCriteriaIdx = 0;
 
     /**
      * A sheet with the maximum values of concessions at each step
      */
-    private List<Double> compromiseList = List.of(0d, 0d, 0d, 0d);
+    @Setter
+    private List<Double> compromiseList;
 
-    /**
-     *
-     */
-    private boolean isFirstCriteriaIsMoreImportant = true;
 
     /**
      * The set of the states. Corresponds to the vertices in the graph
@@ -48,12 +52,12 @@ public class OptimalPathSolver
      * The shortest route according to one of the criteria for
      * comparison at the algorithm step
      */
-    private final Map<Integer, Weights> referenceStateControlSetMap = new HashMap<>();
+    private final Map<Integer, Double> referenceStateControlSetMap = new HashMap<>();
 
     /**
      * Memorization of calculated values
      */
-    private final Map<Integer, Map<State, WinningAndControl>> cacheW = new HashMap<>();
+    private final Map<Integer, Map<State, Result>> cacheW = new HashMap<>();
 
     /**
      * The number of stages in the task. It ss equal to the number of
@@ -67,67 +71,107 @@ public class OptimalPathSolver
      */
     private State startState;
 
+    private void DFS(Graph graph, String current, int stageNumber) {
+        State currentState = new State(current, stageNumber);
+
+        Set<Control> controlSet = new HashSet<>();
+        for (Edge edge : graph.getEdges(current)) {
+
+            String next = graph.getOppositeNode(edge, current);
+
+            State nextState = new State(next, stageNumber + 1);
+
+            Control control = new Control(edge, currentState, nextState);
+            controlSet.add(control);
+
+            if (!stateSet.contains(nextState)) {
+                DFS(graph, next, stageNumber + 1);
+            }
+        }
+
+        stateControlSetMap.put(currentState, controlSet);
+    }
+
+    /**
+     * Initializes states and controls
+     *
+     * @param graph
+     * @param start
+     */
+    private void initStatesAndControls(Graph graph, String start) {
+        Deque<String> deque = new LinkedList<>();
+        Map<String, Integer> stateToStageNum = new HashMap<>();
+        Set<String> viewed = new HashSet<>();
+        stateToStageNum.put(start, 0);
+        deque.add(start);
+
+        while (!deque.isEmpty()) {
+            String current = deque.pollFirst();
+            viewed.add(current);
+            int stageNumber = stateToStageNum.get(current);
+            State currentState = new State(current, stageNumber);
+
+            if (startState == null) {
+                startState = currentState;
+            }
+
+            Set<Control> controlSet = new HashSet<>();
+            for (Edge edge : graph.getAdjacentEdges(current)) {
+                String next = graph.getOppositeNode(edge, current);
+
+                if (viewed.contains(next)) {
+                    continue;
+                }
+
+                deque.add(next);
+                stateToStageNum.put(next, stageNumber + 1);
+
+                State nextState = new State(next, stageNumber + 1);
+                Control control = new Control(edge, currentState, nextState);
+                controlSet.add(control);
+            }
+
+            stateControlSetMap.put(currentState, controlSet);
+        }
+
+    }
+
     /**
      * Initializes a variety of states, controls, etc.
      *
      * @param graph the graph in which you want to find the
      *              optimal route
      */
-    public void init(Graph graph, List<Double> compromiseList,
-                     boolean isFirstCriteriaIsMoreImportant) {
+    public void init(Graph graph, String startNode, String lastNode, List<Double> compromiseList, int mainCriteriaIdx) {
 
         this.compromiseList = compromiseList;
-        this.isFirstCriteriaIsMoreImportant = isFirstCriteriaIsMoreImportant;
+        this.mainCriteriaIdx = mainCriteriaIdx;
+
         clear();
 
-        DijkstraShortestPath.Result w1Result = dijkstra.findShortestPath(graph, "S", 0);
-        DijkstraShortestPath.Result w2Result = dijkstra.findShortestPath(graph, "S", 1);
+        initStatesAndControls(graph, startNode);
 
+        initReferenceControls(graph, startNode, lastNode, mainCriteriaIdx);
+    }
+
+    private void initReferenceControls(Graph graph, String startNode, String lastNode, int mainCriteriaIdx) {
         //The shortest route according to one of the criteria for
         // comparison at the algorithm step
         List<String> referencePath;
-        if (isFirstCriteriaIsMoreImportant) {
-            referencePath = dijkstra.restoreOptimalPath(w1Result.getPreviousNodeList(), "T");
+        if (mainCriteriaIdx == 0) {
+            DijkstraShortestPath.Result w1Result = dijkstra.findShortestPath(graph, startNode, 0);
+            referencePath = dijkstra.restoreOptimalPath(w1Result.getPreviousNodeList(), lastNode);
         } else {
-            referencePath = dijkstra.restoreOptimalPath(w2Result.getPreviousNodeList(), "T");
+            DijkstraShortestPath.Result w2Result = dijkstra.findShortestPath(graph, startNode, 1);
+            referencePath = dijkstra.restoreOptimalPath(w2Result.getPreviousNodeList(), lastNode);
         }
 
-        // The number of stages in the task. It ss equal to the number
-        // of edges in the optimal path
-        stageCount = referencePath.size() - 1;
-
-        for (String node : graph.nodeNamesSet()) {
-            State state = new State(node);
-            stateSet.add(state);
-
-            //Form a set of possible controls for this state
-            Set<Control> controlSet = new HashSet<>();
-            for (Edge edge : graph.getEdges(node)) {
-                State targetState = new State(graph.getOppositeNode(edge, node));
-                if (stateControlSetMap.containsKey(targetState)
-                        || stateControlSetMap.containsKey(state)) {
-                    continue;
-                }
-
-                Control control = new Control(
-                        state,
-                        targetState,
-                        edge.getWeights()[0],
-                        edge.getWeights()[1]
-                );
-
-                controlSet.add(control);
-            }
-
-            stateControlSetMap.put(state, controlSet);
-        }
-
-        startState = new State(referencePath.get(0));
         for (int i = 1; i < referencePath.size(); i++) {
             Edge edge = graph.getEdge(referencePath.get(i - 1), referencePath.get(i));
-            Weights weights = new Weights(edge.getWeights()[0], edge.getWeights()[1]);
-            referenceStateControlSetMap.put(i - 1, weights);
+            referenceStateControlSetMap.put(i - 1, edge.getWeights()[mainCriteriaIdx]);
         }
+
+        stageCount = referencePath.size() - 1;
     }
 
     /**
@@ -138,72 +182,75 @@ public class OptimalPathSolver
         stateControlSetMap.clear();
         referenceStateControlSetMap.clear();
         cacheW.clear();
+        startState = null;
     }
 
     @Override
-    public Winnings w(Integer stage, State state, Control control) {
-        double referenceW1 = referenceStateControlSetMap.get(stage).w1;
-        double referenceW2 = referenceStateControlSetMap.get(stage).w2;
-
-        double controlW1 = control.w1;
-        double controlW2 = control.w2;
-
-        double diff;
-        if (isFirstCriteriaIsMoreImportant) {
-            diff = referenceW1 - controlW1;
+    public Double w(Integer stage, State state, Control control) {
+        if (mainCriteriaIdx == 0) {
+            return control.edge.getWeights()[1];
         } else {
-            diff = referenceW2 - controlW2;
+            return control.edge.getWeights()[0];
         }
-
-        return new Winnings(diff, controlW1, controlW2);
     }
 
     @Override
     public State phi(State state, Control control) {
-        if (stateControlSetMap.get(state).contains(control)) {
-            return control.target;
-        }
-        throw new RuntimeException("The transmitted state does not have the specified control");
+        return control.nextState;
     }
 
     @Override
-    public WinningAndControl W(Integer stage, State state) {
+    public Result W(Integer stage, State state) {
         if (cacheW.containsKey(stage)) {
             if (cacheW.get(stage).containsKey(state)) {
                 return cacheW.get(stage).get(state);
             }
         }
 
-        Winnings bestW = null;
+        double bestW = Double.MAX_VALUE;
         Control bestControl = null;
 
         for (Control control : stateControlSetMap.get(state)) {
-            Winnings wi = w(stage, state, control);
+            double wi = w(stage, state, control);
             State nextState = phi(state, control);
 
-            Winnings optimalWi;
-            if (stage == stageCount - 1) {
+            double diff;
+            if (mainCriteriaIdx == 0) {
+                diff = referenceStateControlSetMap.get(stage) - control.edge.getWeights()[0];
+            } else {
+                diff = referenceStateControlSetMap.get(stage) - control.edge.getWeights()[1];
+            }
+
+            double optimalWi;
+            if (diff < -compromiseList.get(stage)) {
+                optimalWi = Double.MAX_VALUE;
+            } else if (stage == stageCount - 1) {
                 optimalWi = wi;
             } else {
-                optimalWi = wi.add(W(stage + 1, nextState).winnings);
+                optimalWi = wi + W(stage + 1, nextState).win;
             }
 
-            if (optimalWi.difference < -compromiseList.get(stage)) {
-                optimalWi.w2 = Double.MAX_VALUE;
-            }
-
-            if (bestW == null || compare(optimalWi, bestW) > 0) {
+            if (bestW == Double.MAX_VALUE || Double.compare(optimalWi, bestW) < 0) {
                 bestW = optimalWi;
                 bestControl = control;
             }
         }
 
-        WinningAndControl res = new WinningAndControl(bestW, bestControl);
+        Result res = new Result(bestW, bestControl);
         if (!cacheW.containsKey(stage)) {
             cacheW.put(stage, new HashMap<>());
         }
         cacheW.get(stage).put(state, res);
+
         return res;
+    }
+
+    @AllArgsConstructor
+    public static class Result {
+
+        private Double win;
+
+        private Control bestControl;
     }
 
     /**
@@ -211,15 +258,15 @@ public class OptimalPathSolver
      *
      * @return the route in the form of a sequence of vertices names
      */
-    private List<String> restoreOptimalPath() {
+    public List<String> restoreOptimalPath() {
         List<String> optimalPath = new ArrayList<>();
 
         State current = startState;
         optimalPath.add(startState.nodeName);
         for (int i = 0; i < stageCount; i++) {
-            WinningAndControl res = W(i, current);
-            optimalPath.add(res.control.target.nodeName);
-            Control control = res.control;
+            Result res = W(i, current);
+            optimalPath.add(res.bestControl.nextState.nodeName);
+            Control control = res.bestControl;
             current = phi(current, control);
         }
 
@@ -228,51 +275,30 @@ public class OptimalPathSolver
 
     @Override
     public Result solve() {
-        WinningAndControl winningAndControl = W(0, startState);
-        List<String> optPath = restoreOptimalPath();
-        return new Result(winningAndControl, optPath);
-    }
-
-    /**
-     * Compares two values of the gain by the amount of the concession.
-     * If these values are equal, then the value of a more weighty
-     * criterion is compared.
-     *
-     * @param win1 first winnings
-     * @param win2 second winnings
-     * @return a negative integer, zero, or a positive integer as this object
-     * is worse than, equal to, or better than the specified object
-     */
-    private int compare(Winnings win1, Winnings win2) {
-        if (isFirstCriteriaIsMoreImportant) {
-            return -Double.compare(win1.w2, win2.w2);
-        } else {
-            return -Double.compare(win1.w1, win2.w1);
-        }
+        return W(0, startState);
     }
 
     /**
      * State corresponding to the graph node
      */
-    @AllArgsConstructor
+    @Getter
+    @RequiredArgsConstructor
     public static class State extends AbstractState {
 
-        /**
-         * The node name
-         */
-        private String nodeName;
+        private final String nodeName;
+
+        private final int stageNum;
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof State state))
-                return false;
-            return nodeName.equals(state.nodeName);
+            if (!(o instanceof State state)) return false;
+            return Objects.equals(nodeName, state.nodeName);
         }
 
         @Override
         public int hashCode() {
-            return nodeName.hashCode();
+            return Objects.hash(nodeName, stageNum);
         }
     }
 
@@ -280,116 +306,25 @@ public class OptimalPathSolver
     /**
      * Control corresponding to the selected edge
      */
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class Control extends AbstractControl {
 
-        /**
-         * Previous state
-         */
-        private State source;
+        private final Edge edge;
 
-        /**
-         * Next state
-         */
-        private State target;
+        private final State prevState;
 
-        /**
-         * first weight of the edge
-         */
-        private double w1;
-
-        /**
-         * second weight of the edge
-         */
-        private double w2;
+        private final State nextState;
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof Control control)) return false;
-            return Double.compare(w1, control.w1) == 0
-                    && Double.compare(w2, control.w2) == 0
-                    && source.equals(control.source)
-                    && target.equals(control.target);
+            return edge.equals(control.edge);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(source, target, w1, w2);
-        }
-    }
-
-
-    @AllArgsConstructor
-    public static class Winnings implements Comparable<Winnings> {
-
-        Double difference;
-
-        Double w1;
-
-        Double w2;
-
-        public Winnings add(Winnings o) {
-            return new Winnings(
-                    this.difference,
-                    this.w1 + o.w1,
-                    this.w2 + o.w2
-            );
-        }
-
-        @Override
-        public int compareTo(Winnings o) {
-            int res = Double.compare(this.difference, o.difference);
-            if (res != 0) {
-                return res;
-            }
-
-            if (this.w1 < o.w1) {
-                return 1;
-            }
-
-            return 0;
-        }
-    }
-
-
-    /**
-     * The value of winning with optimal control
-     */
-    @AllArgsConstructor
-    public static class WinningAndControl {
-
-        Winnings winnings;
-
-        Control control;
-    }
-
-
-    /**
-     * The structure for returning the result of solving the problem
-     */
-    @AllArgsConstructor
-    @Getter
-    public static class Result {
-
-        private WinningAndControl winningAndControl;
-
-        /**
-         * A path in the form of a list of vertices
-         */
-        private List<String> optimalPath;
-    }
-
-
-    private static class Weights {
-
-        double w1;
-
-        double w2;
-
-        public Weights(double... weights) {
-            w1 = weights[0];
-            w2 = weights[1];
+            return Objects.hashCode(edge);
         }
     }
 }
