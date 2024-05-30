@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.gui.fx.action.GraphEditActions;
 
-import java.awt.FlowLayout;
 import java.util.Optional;
 
 
@@ -25,6 +24,12 @@ import java.util.Optional;
  * The dialog window for entering edge information
  */
 public class AddEdgeDialog {
+
+    private final GraphEditActions actions;
+
+    public AddEdgeDialog(GraphEditActions actions) {
+        this.actions = actions;
+    }
 
     private EdgeDTO inputtedEdge;
 
@@ -34,7 +39,7 @@ public class AddEdgeDialog {
     }
 
     private void init() {
-        ObservableList<String> nodes = FXCollections.observableArrayList(GraphEditActions.getNodes());
+        ObservableList<String> nodes = FXCollections.observableArrayList(actions.getNodes());
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);

@@ -3,8 +3,7 @@ package ru.kotb.lno.gui.fx.node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-
-import static ru.kotb.lno.gui.fx.action.GraphEditActions.addNode;
+import ru.kotb.lno.gui.fx.action.GraphEditActions;
 
 
 /**
@@ -12,7 +11,10 @@ import static ru.kotb.lno.gui.fx.action.GraphEditActions.addNode;
  */
 public class MyMenuBar extends MenuBar {
 
-    public MyMenuBar() {
+    private final GraphEditActions graphEditActions;
+
+    public MyMenuBar(GraphEditActions graphEditActions) {
+        this.graphEditActions = graphEditActions;
         Menu menu = new Menu("Graph");
 
         MenuItem m1 = new MenuItem("Add node");
@@ -20,8 +22,6 @@ public class MyMenuBar extends MenuBar {
 
         menu.getItems().add(m1);
         menu.getItems().add(m2);
-
-        m1.setOnAction(actionEvent -> addNode());
 
         this.getMenus().add(menu);
     }

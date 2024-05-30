@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToolBar;
-import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.gui.fx.action.GraphEditActions;
 import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
 
@@ -17,9 +16,10 @@ public class MyToolBar extends ToolBar {
 
     public static Button addNodeBtn;
 
-    public static DrawPane drawPane;
+    private final GraphEditActions actions;
 
-    public MyToolBar() {
+    public MyToolBar(GraphEditActions actions) {
+        this.actions = actions;
         addNodeBtn = new Button("Add node");
         Button addEdgeBtn = new Button("Add edge");
         Button shortestW1Btn = new Button("Add edge");
@@ -34,16 +34,11 @@ public class MyToolBar extends ToolBar {
         ComboBox<String> criteriaComboBOx = new ComboBox<>(nodes);
 
         addEdgeBtn.setOnAction(actionEvent -> {
-            EdgeDTO edgeDTO = GraphEditActions.addEdge();
-            assert edgeDTO != null;
-            DrawPane.InfoNode source = drawPane.getInfoNode(edgeDTO.getSource());
-            DrawPane.InfoNode target = drawPane.getInfoNode(edgeDTO.getTarget());
-            drawPane.buildAndAddLine(source, target, edgeDTO.getWeight1(), edgeDTO.getWeight2());
+            actions.addEdge();
         });
 
         addNodeBtn.setOnAction(actionEvent -> {
             addNodeBtn.setDisable(true);
-            GraphEditActions.addNodeBtnIsPressed = true;
         });
 
         this.getItems().addAll(addNodeBtn, addEdgeBtn, deleteNodeBtn, deleteEdgeBtn, criteriaComboBOx, optimizeBtn);

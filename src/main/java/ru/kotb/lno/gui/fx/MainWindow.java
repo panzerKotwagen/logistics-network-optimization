@@ -2,9 +2,9 @@ package ru.kotb.lno.gui.fx;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import ru.kotb.lno.gui.fx.action.GraphEditActions;
 import ru.kotb.lno.gui.fx.node.DrawPane;
 import ru.kotb.lno.gui.fx.node.MyMenuBar;
 import ru.kotb.lno.gui.fx.node.MyToolBar;
@@ -19,16 +19,6 @@ public class MainWindow extends Application {
         launch(args);
     }
 
-    private void drawLines(GraphicsContext gc) {
-
-        gc.beginPath();
-        gc.moveTo(30.5, 30.5);
-        gc.lineTo(150.5, 30.5);
-        gc.lineTo(150.5, 150.5);
-        gc.lineTo(30.5, 30.5);
-        gc.stroke();
-    }
-
     @Override
     public void start(Stage stage) {
         stage.setTitle("logistics-network-optimization");
@@ -38,10 +28,15 @@ public class MainWindow extends Application {
 
         VBox vb = new VBox();
 
-        vb.getChildren().add(new MyMenuBar());
-        vb.getChildren().add(new MyToolBar());
         DrawPane drawPane = new DrawPane();
-        MyToolBar.drawPane = drawPane;
+        GraphEditActions actions = new GraphEditActions(drawPane);
+
+        MyMenuBar menuBar = new MyMenuBar(actions);
+        MyToolBar toolBar = new MyToolBar(actions);
+
+        vb.getChildren().add(menuBar);
+        vb.getChildren().add(toolBar);
+
         vb.getChildren().add(drawPane);
 
         Scene scene = new Scene(vb);

@@ -1,10 +1,13 @@
 package ru.kotb.lno.gui.fx.action;
 
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseEvent;
 import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
+import ru.kotb.lno.gui.fx.node.DrawPane;
+import ru.kotb.lno.gui.fx.node.MyToolBar;
 
 import java.util.Optional;
 import java.util.Set;
@@ -19,47 +22,19 @@ public class GraphEditActions {
     /**
      * The graph to edit
      */
-    private static final Graph graph = new JGraphT();
+    private final Graph graph;
 
-    public static boolean addNodeBtnIsPressed = false;
+    private final DrawPane drawPane;
 
-    public static Set<String> getNodes() {
+    public GraphEditActions(DrawPane drawPane) {
+        this.graph = new JGraphT();
+        this.drawPane = drawPane;
+
+        mouseEventHandler();
+    }
+
+    public Set<String> getNodes() {
         return graph.nodeNamesSet();
-    }
-
-    /**
-     * Add node to the graph
-     */
-    public static String addNode() {
-        Optional<String> nodeName = invokeNodeDialog();
-        if (nodeName.isEmpty()) {
-            return null;
-        }
-        graph.addNode(nodeName.get());
-        System.out.println(graph.getNode(nodeName.get()));
-        return nodeName.get();
-    }
-
-    /**
-     * Add edge to the graph
-     */
-    //TODO: replace return type  with Optional
-    public static EdgeDTO addEdge() {
-        Optional<EdgeDTO> res = invokeEdgeDialog();
-        if (res.isEmpty()) {
-            return null;
-        }
-
-        EdgeDTO edge = res.get();
-        graph.addEdge(
-                edge.getSource(),
-                edge.getTarget(),
-                "",
-                edge.getWeight1(),
-                edge.getWeight2()
-        );
-        System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
-        return edge;
     }
 
     /**
@@ -67,7 +42,7 @@ public class GraphEditActions {
      *
      * @return {@code Optional<String>} of name
      */
-    private static Optional<String> invokeNodeDialog() {
+    private Optional<String> invokeNodeDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add node");
         dialog.setHeaderText("New node");
@@ -76,12 +51,65 @@ public class GraphEditActions {
         return dialog.showAndWait();
     }
 
+    private void mouseEventHandler() {
+        drawPane.addEventHandler(MouseEvent.MOUSE_PRESSED, this::addNodeByMouseClicking);
+    }
+
+    private void addNodeByMouseClicking(MouseEvent mouseEvent) {
+        if (!MyToolBar.addNodeBtn.isDisable()) {
+            return;
+        }
+
+        Optional<String> optionalName = invokeNodeDialog();
+        if (optionalName.isEmpty()) {
+            return;
+        }
+
+        String name = optionalName.get();
+
+        graph.addNode(name);
+        System.out.println(graph.getNode(name));
+
+        int x = (int) mouseEvent.getX();
+        int y = (int) mouseEvent.getY();
+
+        drawPane.getInfoNodeSet().add(drawPane.drawNode(name, x, y));
+
+        MyToolBar.addNodeBtn.setDisable(false);
+    }
+
     /**
      * Invoke dialog window to write info about edge
      *
      * @return {@code Optional<EdgeDTO>} of edge
      */
-    private static Optional<EdgeDTO> invokeEdgeDialog() {
-        return new AddEdgeDialog().invoke();
+    private Optional<EdgeDTO> invokeEdgeDialog() {
+        return new AddEdgeDialog(this).invoke();
+    }
+
+    /**
+     * Add edge to the graph
+     */
+    public void addEdge() {
+        Optional<EdgeDTO> edgeOptional = invokeEdgeDialog();
+        if (edgeOptional.isEmpty()) {
+            return;
+        }
+
+        EdgeDTO edge = edgeOptional.get();
+        graph.addEdge(
+                edge.getSource(),
+                edge.getTarget(),
+                "",
+                edge.getWeight1(),
+                edge.getWeight2()
+        );
+
+
+        DrawPane.InfoNode source = drawPane.getInfoNode(edge.getSource());
+        DrawPane.InfoNode target = drawPane.getInfoNode(edge.getTarget());
+        drawPane.drawLine(source, target, edge.getWeight1(), edge.getWeight2());
+
+        System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
     }
 }

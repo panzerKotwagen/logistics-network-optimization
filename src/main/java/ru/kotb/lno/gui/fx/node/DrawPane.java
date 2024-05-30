@@ -1,12 +1,10 @@
 package ru.kotb.lno.gui.fx.node;
 
 import javafx.beans.binding.DoubleBinding;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -18,7 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import ru.kotb.lno.gui.fx.action.GraphEditActions;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,37 +27,29 @@ import java.util.Set;
  */
 public class DrawPane extends Pane {
 
+    @Getter
     Set<InfoNode> infoNodeSet = new HashSet<>();
 
     public DrawPane() {
         setBackground(new Background(new BackgroundFill(Color.WHITESMOKE.brighter(), CornerRadii.EMPTY, Insets.EMPTY)));
 
         Canvas canvas = new Canvas(900, 600);
-        this.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
-            if (!GraphEditActions.addNodeBtnIsPressed) {
-                return;
-            }
-
-            int x = (int) mouseEvent.getX();
-            int y = (int) mouseEvent.getY();
-
-            String nodeName = GraphEditActions.addNode();
-            infoNodeSet.add(buildAndAddNode(nodeName, x, y));
-
-            MyToolBar.addNodeBtn.setDisable(false);
-            GraphEditActions.addNodeBtnIsPressed = false;
-        });
+//        this.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+//            if (!GraphEditActions.addNodeBtnIsPressed) {
+//                return;
+//            }
+//
+//            int x = (int) mouseEvent.getX();
+//            int y = (int) mouseEvent.getY();
+//
+//            String nodeName = GraphEditActions.addNode();
+//            infoNodeSet.add(drawNode(nodeName, x, y));
+//
+//            MyToolBar.addNodeBtn.setDisable(false);
+//            GraphEditActions.addNodeBtnIsPressed = false;
+//        });
 
         this.getChildren().add(canvas);
-
-//        test();
-    }
-
-    private void test() {
-        String nodeName = GraphEditActions.addNode();
-        infoNodeSet.add(buildAndAddNode(nodeName, 250, 250));
-        String nodeName2 = GraphEditActions.addNode();
-        infoNodeSet.add(buildAndAddNode(nodeName2, 400, 150));
     }
 
     public InfoNode getInfoNode(String text) {
@@ -79,7 +69,7 @@ public class DrawPane extends Pane {
      * @param y    y position of the node
      * @return built node
      */
-    public InfoNode buildAndAddNode(String text, double x, double y) {
+    public InfoNode drawNode(String text, double x, double y) {
         InfoNode node = new InfoNode(text);
 //        node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 //            @Override
@@ -98,7 +88,7 @@ public class DrawPane extends Pane {
      * @param sourceNode source node
      * @param targetNode target node
      */
-    public void buildAndAddLine(InfoNode sourceNode, InfoNode targetNode, double w1, double w2) {
+    public void drawLine(InfoNode sourceNode, InfoNode targetNode, double w1, double w2) {
         javafx.scene.shape.Line line = new javafx.scene.shape.Line();
         line.startXProperty().bind(sourceNode.centerXProperty());
         line.startYProperty().bind(sourceNode.centerYProperty());
@@ -106,12 +96,12 @@ public class DrawPane extends Pane {
         line.endYProperty().bind(targetNode.centerYProperty());
         this.getChildren().add(line);
 
-        addText(w1, w2, line);
+        drawEdgeWeights(w1, w2, line);
 
         line.toBack();
     }
 
-    private void addText(double w1, double w2, Line line) {
+    private void drawEdgeWeights(double w1, double w2, Line line) {
         double maxX = Math.max(line.getStartX(), line.getEndX());
         double minX = Math.min(line.getStartX(), line.getEndX());
 
@@ -132,9 +122,9 @@ public class DrawPane extends Pane {
 
         private static final double PADDING = 8;
 
-        private double x;
-
         private final String name;
+
+        private double x;
 
         private double y;
 
