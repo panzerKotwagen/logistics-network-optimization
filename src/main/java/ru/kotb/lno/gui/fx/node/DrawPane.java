@@ -1,6 +1,7 @@
 package ru.kotb.lno.gui.fx.node;
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -12,6 +13,10 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import ru.kotb.lno.gui.fx.action.GraphEditActions;
 
@@ -76,6 +81,12 @@ public class DrawPane extends Pane {
      */
     public InfoNode buildAndAddNode(String text, double x, double y) {
         InfoNode node = new InfoNode(text);
+//        node.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//            @Override
+//            public void handle(MouseEvent mouseEvent) {
+//                node.getChildren().remove(0);
+//            }
+//        });
         node.setPosition(x, y);
         this.getChildren().add(node);
         return node;
@@ -95,6 +106,12 @@ public class DrawPane extends Pane {
         line.endYProperty().bind(targetNode.centerYProperty());
         this.getChildren().add(line);
 
+        addText(w1, w2, line);
+
+        line.toBack();
+    }
+
+    private void addText(double w1, double w2, Line line) {
         double maxX = Math.max(line.getStartX(), line.getEndX());
         double minX = Math.min(line.getStartX(), line.getEndX());
 
@@ -109,8 +126,6 @@ public class DrawPane extends Pane {
         text.setLayoutX(x);
         text.setLayoutY(y);
         this.getChildren().add(text);
-
-        line.toBack();
     }
 
     public static class InfoNode extends StackPane {
@@ -125,8 +140,13 @@ public class DrawPane extends Pane {
 
         public InfoNode(String txt) {
             Text text = new Text(txt);
-            double size = 10 + (2 * PADDING);
-            setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";-fx-border-color:black;-fx-border-width:1px;-fx-background-color:yellow;");
+            text.setFont(Font.font("Arial", FontWeight.LIGHT, FontPosture.REGULAR, 14));
+            double size = 20 + (2 * PADDING);
+            setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
+                    "-fx-border-color:black;" +
+                    "-fx-border-width:2px;" +
+                    "-fx-background-color:yellow;");
+
             setMinSize(size, size);
             getChildren().add(text);
             name = txt;
