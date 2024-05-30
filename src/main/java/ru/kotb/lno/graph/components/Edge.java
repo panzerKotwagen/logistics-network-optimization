@@ -26,7 +26,7 @@ public class Edge extends DefaultEdge {
     /**
      * Weight array
      */
-    private final int[] weights = new int[WEIGHT_COUNT];
+    private final double[] weights = new double[WEIGHT_COUNT];
 
     public Edge(String name, int w1, int w2) {
         this.name = name;
