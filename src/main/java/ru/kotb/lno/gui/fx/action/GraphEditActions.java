@@ -126,6 +126,16 @@ public class GraphEditActions {
         }
     }
 
+    public void update() {
+        drawPane.update();
+    }
+
+    public void clear() {
+        drawPane.getInfoNodeSet().clear();
+        drawPane.getInfoEdgeSet().clear();
+        drawPane.update();
+    }
+
     public void optimize() {
         Optional<SettingsDTO> settingsOptional = new OptimizeDialog(this).invoke();
         if (settingsOptional.isEmpty()) {

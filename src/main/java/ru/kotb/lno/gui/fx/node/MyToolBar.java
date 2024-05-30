@@ -1,9 +1,6 @@
 package ru.kotb.lno.gui.fx.node;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToolBar;
 import ru.kotb.lno.gui.fx.action.GraphEditActions;
 
@@ -43,6 +40,14 @@ public class MyToolBar extends ToolBar {
             actions.removeNode();
         });
 
-        this.getItems().addAll(addNodeBtn, addEdgeBtn, deleteNodeBtn, deleteEdgeBtn, optimizeBtn);
+        clear.setOnAction(actionEvent -> {
+            actions.clear();
+        });
+
+        update.setOnAction(actionEvent -> {
+            actions.update();
+        });
+
+        this.getItems().addAll(addNodeBtn, addEdgeBtn, deleteNodeBtn, deleteEdgeBtn, optimizeBtn, update, clear);
     }
 }
