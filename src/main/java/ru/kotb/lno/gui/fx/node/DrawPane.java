@@ -2,8 +2,6 @@ package ru.kotb.lno.gui.fx.node;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -63,29 +61,18 @@ public class DrawPane extends Pane {
         }
     }
 
-    /**
-     * Build and place new node
-     *
-     * @param text node text
-     * @param x    x position of the node
-     * @param y    y position of the node
-     */
     public void addNode(String text, double x, double y) {
         InfoNode node = new InfoNode(text);
         node.setPosition(x, y);
         infoNodeSet.add(node);
+        update();
     }
 
-    /**
-     * Build and place line between two nodes
-     *
-     * @param source source node
-     * @param target target node
-     */
     public void addEdge(InfoNode source, InfoNode target, double w1, double w2) {
         String weightText = String.format("(%.1f, %.1f)", w1, w2);
         InfoEdge line = new InfoEdge(source, target, weightText);
         infoEdgeSet.add(line);
+        update();
     }
 
     public static class InfoNode extends StackPane {

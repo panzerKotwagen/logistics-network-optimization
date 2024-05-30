@@ -76,7 +76,6 @@ public class GraphEditActions {
         drawPane.addNode(name, x, y);
 
         MyToolBar.addNodeBtn.setDisable(false);
-        drawPane.update();
     }
 
     /**
@@ -112,6 +111,5 @@ public class GraphEditActions {
         drawPane.addEdge(source, target, edge.getWeight1(), edge.getWeight2());
 
         System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
-        drawPane.update();
     }
 }
