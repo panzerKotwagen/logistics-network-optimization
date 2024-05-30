@@ -72,8 +72,7 @@ public class DrawPane extends Pane {
             resetSelectedNode();
 
             selectedNode = node;
-            selectedNode.setBackground(new Background(
-                    new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+            selectedNode.changeColor(Color.RED);
         });
 
         infoNodeSet.add(node);
@@ -82,8 +81,7 @@ public class DrawPane extends Pane {
 
     private void resetSelectedNode() {
         if (selectedNode != null) {
-            selectedNode.setBackground(new Background(
-                    new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+            selectedNode.changeColor(Color.YELLOW);
             selectedNode = null;
         }
     }
@@ -142,6 +140,11 @@ public class DrawPane extends Pane {
             this.y = y;
             setLayoutX(x - getWidth() / 2);
             setLayoutY(y - getHeight() / 2);
+        }
+
+        public void changeColor(Color color) {
+            this.setBackground(new Background(
+                    new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         }
     }
 

@@ -2,14 +2,18 @@ package ru.kotb.lno.gui.fx.action;
 
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import ru.kotb.lno.dto.EdgeDTO;
+import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.graph.Graph;
+import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
 import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
 import ru.kotb.lno.gui.fx.node.DrawPane;
 import ru.kotb.lno.gui.fx.node.MyToolBar;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -123,6 +127,21 @@ public class GraphEditActions {
     }
 
     public void optimize() {
-        new OptimizeDialog(this).init();
+        Optional<SettingsDTO> settingsOptional = new OptimizeDialog(this).invoke();
+        if (settingsOptional.isEmpty()) {
+            return;
+        }
+        SettingsDTO settings = settingsOptional.get();
+        OptimalPathSolver solver = new OptimalPathSolver(
+                graph, settings.getStart(), settings.getEnd(), settings.getMainCriteriaNum(), settings.getConcessionValue());
+
+        solver.solve();
+        List<String> optPath = solver.restoreOptimalPath();
+
+        for (DrawPane.InfoNode infoNode : drawPane.getInfoNodeSet()) {
+            if (optPath.contains(infoNode.getName())) {
+                infoNode.changeColor(Color.GREEN);
+            }
+        }
     }
 }

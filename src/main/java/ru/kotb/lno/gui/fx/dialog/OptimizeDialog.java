@@ -16,18 +16,28 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.gui.fx.action.GraphEditActions;
+
+import java.util.Optional;
 
 
 public class OptimizeDialog {
 
     private final GraphEditActions actions;
 
+    private SettingsDTO res;
+
     public OptimizeDialog(GraphEditActions actions) {
         this.actions = actions;
     }
 
-    public void init() {
+    public Optional<SettingsDTO> invoke() {
+        init();
+        return Optional.ofNullable(res);
+    }
+
+    private void init() {
         ObservableList<String> nodes = FXCollections.observableArrayList(actions.getNodes());
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -59,12 +69,20 @@ public class OptimizeDialog {
         cancelBtn.setPrefWidth(60);
 
         okBtn.setOnAction(e -> {
-//            int w1 = Integer.parseInt(w1TextField.getText());
-//            int w2 = Integer.parseInt(w2TextField.getText());
-//            String source = startComboBox.getValue();
-//            String target = mainCriteriaComboBox.getValue();
-//            inputtedEdge = new EdgeDTO(source, target, w1, w2);
-//            stage.close();
+            double concessionValue = Double.parseDouble(concessionTextField.getText());
+            String source = startComboBox.getValue();
+            String target = endComboBox.getValue();
+            int mainCriteriaNum;
+            RadioButton selectedToggle = (RadioButton) toggleGroup.getSelectedToggle();
+            if (selectedToggle.equals(costBtn)) {
+                mainCriteriaNum = 0;
+            } else {
+                mainCriteriaNum = 1;
+            }
+
+            res = new SettingsDTO(source, target, mainCriteriaNum, concessionValue);
+
+            stage.close();
         });
         cancelBtn.setOnAction(e -> {
             stage.close();
