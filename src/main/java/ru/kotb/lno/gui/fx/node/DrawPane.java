@@ -197,8 +197,8 @@ public class DrawPane extends Pane {
             double maxY = Math.max(this.getStartY(), this.getEndY());
             double minY = Math.min(this.getStartY(), this.getEndY());
 
-            double x = minX + (maxX - minX) / 2;
-            double y = minY + (maxY - minY) / 2 - 10;
+            double x = minX + (maxX - minX) / 2 - 15;
+            double y = minY + (maxY - minY) / 2 - 15;
 
             text = new Text(string);
             text.setLayoutX(x);

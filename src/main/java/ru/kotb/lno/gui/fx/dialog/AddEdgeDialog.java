@@ -65,8 +65,8 @@ public class AddEdgeDialog {
         cancelBtn.setPrefWidth(60);
 
         okBtn.setOnAction(e -> {
-            int w1 = Integer.parseInt(w1TextField.getText());
-            int w2 = Integer.parseInt(w2TextField.getText());
+            double w1 = Double.parseDouble(w1TextField.getText());
+            double w2 = Double.parseDouble(w2TextField.getText());
             String source = sourceComboBox.getValue();
             String target = targetComboBox.getValue();
             inputtedEdge = new EdgeDTO(source, target, w1, w2);

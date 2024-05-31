@@ -25,6 +25,7 @@ public class MainWindow extends Application {
         stage.setWidth(900);
         stage.setHeight(600);
         stage.centerOnScreen();
+        stage.setResizable(false);
 
         VBox vb = new VBox();
 

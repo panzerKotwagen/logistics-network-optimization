@@ -15,7 +15,7 @@ public class EdgeDTO {
 
     private String target;
 
-    private int weight1;
+    private double weight1;
 
-    private int weight2;
+    private double weight2;
 }

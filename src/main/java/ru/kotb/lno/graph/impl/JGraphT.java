@@ -24,7 +24,7 @@ public class JGraphT implements Graph {
     }
 
     @Override
-    public void addEdge(String firstNodeName, String secondNodeName, String name, int w1, int w2) {
+    public void addEdge(String firstNodeName, String secondNodeName, String name, double w1, double w2) {
         Edge edge = new Edge(name, w1, w2);
         graph.addEdge(firstNodeName, secondNodeName, edge);
     }
@@ -77,7 +77,7 @@ public class JGraphT implements Graph {
     }
 
     @Override
-    public void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2) {
+    public void updateEdgeWeight(String firstNodeName, String secondNodeName, double w1, double w2) {
         Edge edge = getEdge(firstNodeName, secondNodeName);
         edge.getWeights()[0] = w1;
         edge.getWeights()[1] = w2;

@@ -28,7 +28,7 @@ public interface Graph {
      * @param w2             weight value #2
      */
     void addEdge(String firstNodeName, String secondNodeName, String name,
-                 int w1, int w2);
+                 double w1, double w2);
 
     /**
      * Get node on its name
@@ -100,7 +100,7 @@ public interface Graph {
      * @param firstNodeName  the name of the first node
      * @param secondNodeName the name of the second node
      */
-    void updateEdgeWeight(String firstNodeName, String secondNodeName, int w1, int w2);
+    void updateEdgeWeight(String firstNodeName, String secondNodeName, double w1, double w2);
 
     /**
      * Returns the node at the opposite end from {@code adjacentEdge}

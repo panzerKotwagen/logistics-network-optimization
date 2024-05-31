@@ -3,10 +3,15 @@ package ru.kotb.lno.gui.fx.action;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
+import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
 import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
@@ -162,26 +167,43 @@ public class GraphEditActions {
             return;
         }
 
+        double[] weightSum = new double[2];
+
         for (int i = 1; i < optPath.size(); i++) {
             String source = optPath.get(i - 1);
             String target = optPath.get(i);
 
-            for (DrawPane.InfoEdge edge : startNode.getEdgeList()) {
-                String s = edge.getSource().getName();
-                String t = edge.getTarget().getName();
+            Edge edge = graph.getEdge(source, target);
+
+            for (int j = 0; j < 2; j++) {
+                weightSum[i] += edge.getWeights()[i];
+            }
+
+            for (DrawPane.InfoEdge infoEdge : startNode.getEdgeList()) {
+                String s = infoEdge.getSource().getName();
+                String t = infoEdge.getTarget().getName();
 
                 if (s.equals(source) && t.equals(target)
                         || s.equals(target) && t.equals(source)) {
-                    edge.changeColor(Color.GREEN);
-                    if (startNode == edge.getSource()) {
-                        startNode = edge.getTarget();
+                    infoEdge.changeColor(Color.GREEN);
+
+                    if (startNode == infoEdge.getSource()) {
+                        startNode = infoEdge.getTarget();
                     } else {
-                        startNode = edge.getSource();
+                        startNode = infoEdge.getSource();
                     }
+
                     startNode.changeColor(Color.GREEN);
                     break;
                 }
             }
         }
+
+        String weights = String.format("(%.1f, %.1f)", weightSum[0], weightSum[1]);
+        Text text = new Text(weights);
+        text.setFont(Font.font("Arial", FontWeight.LIGHT, FontPosture.REGULAR, 15));
+        text.setX(800);
+        text.setY(20);
+        drawPane.getChildren().add(text);
     }
 }
