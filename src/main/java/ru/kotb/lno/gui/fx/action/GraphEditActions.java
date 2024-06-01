@@ -176,7 +176,7 @@ public class GraphEditActions {
             Edge edge = graph.getEdge(source, target);
 
             for (int j = 0; j < 2; j++) {
-                weightSum[i] += edge.getWeights()[i];
+                weightSum[j] += edge.getWeights()[j];
             }
 
             for (DrawPane.InfoEdge infoEdge : startNode.getEdgeList()) {

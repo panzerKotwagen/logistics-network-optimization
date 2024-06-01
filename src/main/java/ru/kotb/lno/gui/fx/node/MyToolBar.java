@@ -21,7 +21,7 @@ public class MyToolBar extends ToolBar {
         addNodeBtn = new Button("Add node");
         Button addEdgeBtn = new Button("Add edge");
         deleteNodeBtn = new Button("Remove node");
-        Button deleteEdgeBtn = new Button("Remove edge");
+        Button deleteEdgeBtn = new Button("Edit edge");
         Button optimizeBtn = new Button("Optimize");
         Button update = new Button("Update");
         Button clear = new Button("Clear");
