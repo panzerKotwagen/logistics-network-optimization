@@ -211,5 +211,10 @@ public class DrawPane extends Pane {
         public void changeColor(Color color) {
             this.setStroke(color);
         }
+
+        @Override
+        public String toString() {
+            return "Edge{" + source + " - " + target + '}';
+        }
     }
 }

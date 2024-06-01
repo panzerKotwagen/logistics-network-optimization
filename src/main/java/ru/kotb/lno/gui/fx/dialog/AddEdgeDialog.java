@@ -101,7 +101,6 @@ public class AddEdgeDialog {
         flowPane.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(flowPane, 240, 200);
-        stage.setTitle("Dialog");
         stage.setScene(scene);
         stage.showAndWait();
     }

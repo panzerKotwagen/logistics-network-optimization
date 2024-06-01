@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import lombok.Getter;
 import ru.kotb.lno.dto.EdgeDTO;
 import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.graph.Graph;
@@ -14,6 +15,7 @@ import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
+import ru.kotb.lno.gui.fx.dialog.EditEdgeDialog;
 import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
 import ru.kotb.lno.gui.fx.node.DrawPane;
 import ru.kotb.lno.gui.fx.node.MyToolBar;
@@ -38,6 +40,7 @@ public class GraphEditActions {
 
     private final DrawPane drawPane;
 
+    @Getter
     private final Map<Edge, DrawPane.InfoEdge> edgeToInfoEdgeMap = new HashMap<>();
 
     public GraphEditActions(DrawPane drawPane) {
@@ -135,6 +138,10 @@ public class GraphEditActions {
 
             drawPane.removeNode(drawPane.getSelectedNode());
         }
+    }
+
+    public void editEdge() {
+        new EditEdgeDialog(this).invoke();
     }
 
     public void update() {

@@ -21,7 +21,7 @@ public class MyToolBar extends ToolBar {
         addNodeBtn = new Button("Add node");
         Button addEdgeBtn = new Button("Add edge");
         deleteNodeBtn = new Button("Remove node");
-        Button deleteEdgeBtn = new Button("Edit edge");
+        Button editEdgeBtn = new Button("Edit edge");
         Button optimizeBtn = new Button("Optimize");
         Button update = new Button("Update");
         Button clear = new Button("Clear");
@@ -40,6 +40,10 @@ public class MyToolBar extends ToolBar {
             actions.removeNode();
         });
 
+        editEdgeBtn.setOnAction(actionEvent -> {
+            actions.editEdge();
+        });
+
         clear.setOnAction(actionEvent -> {
             actions.clear();
         });
@@ -48,6 +52,6 @@ public class MyToolBar extends ToolBar {
             actions.update();
         });
 
-        this.getItems().addAll(addNodeBtn, addEdgeBtn, deleteNodeBtn, deleteEdgeBtn, optimizeBtn, update, clear);
+        this.getItems().addAll(addNodeBtn, addEdgeBtn, deleteNodeBtn, editEdgeBtn, optimizeBtn, update, clear);
     }
 }
