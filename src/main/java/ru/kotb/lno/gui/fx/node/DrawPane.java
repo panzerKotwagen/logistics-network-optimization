@@ -42,6 +42,7 @@ public class DrawPane extends Pane {
         this.getChildren().add(new Canvas(900, 600));
     }
 
+    //TODO: Optional
     public InfoNode getInfoNode(String text) {
         for (InfoNode node : infoNodeSet) {
             if (node.name.equals(text)) {
@@ -90,15 +91,17 @@ public class DrawPane extends Pane {
         }
     }
 
-    public void addEdge(InfoNode source, InfoNode target, double w1, double w2) {
+    public InfoEdge addEdge(InfoNode source, InfoNode target, double w1, double w2) {
         String weightText = String.format("(%.1f, %.1f)", w1, w2);
-        InfoEdge line = new InfoEdge(source, target, weightText);
+        InfoEdge edge = new InfoEdge(source, target, weightText);
 
-        source.getEdgeList().add(line);
-        target.getEdgeList().add(line);
+        source.getEdgeList().add(edge);
+        target.getEdgeList().add(edge);
 
-        infoEdgeSet.add(line);
+        infoEdgeSet.add(edge);
         update();
+
+        return edge;
     }
 
     public void removeNode(InfoNode node) {

@@ -12,7 +12,6 @@ import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
 import ru.kotb.lno.graph.components.Edge;
-import ru.kotb.lno.graph.components.Node;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
 import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
@@ -39,7 +38,7 @@ public class GraphEditActions {
 
     private final DrawPane drawPane;
 
-    private final Map<Node, DrawPane.InfoNode> nodeToNodeMap = new HashMap<>();
+    private final Map<Edge, DrawPane.InfoEdge> edgeToInfoEdgeMap = new HashMap<>();
 
     public GraphEditActions(DrawPane drawPane) {
         this.graph = new JGraphT();
@@ -122,7 +121,9 @@ public class GraphEditActions {
 
         DrawPane.InfoNode source = drawPane.getInfoNode(edge.getSource());
         DrawPane.InfoNode target = drawPane.getInfoNode(edge.getTarget());
-        drawPane.addEdge(source, target, edge.getWeight1(), edge.getWeight2());
+        DrawPane.InfoEdge infoEdge = drawPane.addEdge(source, target, edge.getWeight1(), edge.getWeight2());
+
+        edgeToInfoEdgeMap.put(graph.getEdge(edge.getSource(), edge.getTarget()), infoEdge);
 
         System.out.println(graph.getEdge(edge.getSource(), edge.getTarget()));
     }
@@ -159,18 +160,13 @@ public class GraphEditActions {
         solver.solve();
         List<String> optPath = solver.restoreOptimalPath();
 
-        DrawPane.InfoNode startNode = null;
-        for (DrawPane.InfoNode infoNode : drawPane.getInfoNodeSet()) {
-            if (optPath.get(0).equals(infoNode.getName())) {
-                startNode = infoNode;
-                startNode.changeColor(Color.GREEN);
-                break;
-            }
-        }
+        DrawPane.InfoNode currentNode = drawPane.getInfoNode(optPath.get(0));
 
-        if (startNode == null) {
+        if (currentNode == null) {
             return;
         }
+
+        currentNode.changeColor(Color.GREEN);
 
         double[] weightSum = new double[2];
 
@@ -178,30 +174,25 @@ public class GraphEditActions {
             String source = optPath.get(i - 1);
             String target = optPath.get(i);
 
+            DrawPane.InfoNode infoNode = drawPane.getInfoNode(target);
+            infoNode.changeColor(Color.GREEN);
+
             Edge edge = graph.getEdge(source, target);
 
             for (int j = 0; j < 2; j++) {
                 weightSum[j] += edge.getWeights()[j];
             }
 
-            for (DrawPane.InfoEdge infoEdge : startNode.getEdgeList()) {
-                String s = infoEdge.getSource().getName();
-                String t = infoEdge.getTarget().getName();
+            DrawPane.InfoEdge infoEdge = edgeToInfoEdgeMap.get(edge);
+            infoEdge.changeColor(Color.GREEN);
 
-                if (s.equals(source) && t.equals(target)
-                        || s.equals(target) && t.equals(source)) {
-                    infoEdge.changeColor(Color.GREEN);
-
-                    if (startNode == infoEdge.getSource()) {
-                        startNode = infoEdge.getTarget();
-                    } else {
-                        startNode = infoEdge.getSource();
-                    }
-
-                    startNode.changeColor(Color.GREEN);
-                    break;
-                }
+            if (currentNode == infoEdge.getSource()) {
+                currentNode = infoEdge.getTarget();
+            } else {
+                currentNode = infoEdge.getSource();
             }
+
+            currentNode.changeColor(Color.GREEN);
         }
 
         String weights = String.format("(%.1f, %.1f)", weightSum[0], weightSum[1]);
