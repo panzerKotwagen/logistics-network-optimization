@@ -13,7 +13,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ru.kotb.lno.dto.EdgeDTO;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.gui.fx.action.GraphEditActions;
 
@@ -26,22 +27,24 @@ public class EditEdgeDialog {
 
     private final GraphEditActions actions;
 
+    ObservableList<Edge> nodes;
+
     public EditEdgeDialog(GraphEditActions actions) {
         this.actions = actions;
     }
 
-    private EdgeDTO inputtedEdge;
+    private Data data;
 
-    public Optional<EdgeDTO> invoke() {
+    public Optional<Data> invoke() {
         init();
-        return Optional.ofNullable(inputtedEdge);
+        return Optional.ofNullable(data);
     }
 
     private void init() {
         Stage stage = stageSettings();
 
         List<Edge> infoEdgeList = new ArrayList<>(actions.getEdgeToInfoEdgeMap().keySet());
-        ObservableList<Edge> nodes = FXCollections.observableArrayList(infoEdgeList);
+        nodes = FXCollections.observableArrayList(infoEdgeList);
         ComboBox<Edge> edgeComboBox = new ComboBox<>(nodes);
 
         Label edgeLabel = new Label("Edge:");
@@ -57,6 +60,8 @@ public class EditEdgeDialog {
         Button removeBtn = new Button("Remove");
         removeBtn.setPrefWidth(60);
 
+        setBtnActions(okBtn, w1TextField, w2TextField, edgeComboBox, stage, cancelBtn, removeBtn);
+
         GridPane gridLayout = constructGridPane(edgeLabel, w1Label, w2Label, edgeComboBox, w1TextField, w2TextField);
 
         FlowPane flowLayout = constructFlowPane(gridLayout, okBtn, removeBtn, cancelBtn);
@@ -64,6 +69,28 @@ public class EditEdgeDialog {
         Scene scene = new Scene(flowLayout, 240, 150);
         stage.setScene(scene);
         stage.showAndWait();
+    }
+
+    private void setBtnActions(Button okBtn, TextField w1TextField, TextField w2TextField, ComboBox<Edge> edgeComboBox, Stage stage, Button cancelBtn, Button removeBtn) {
+        okBtn.setOnAction(e -> {
+            double w1 = Double.parseDouble(w1TextField.getText());
+            double w2 = Double.parseDouble(w2TextField.getText());
+
+            data = new Data(edgeComboBox.getValue(), w1, w2);
+
+            stage.close();
+        });
+
+        cancelBtn.setOnAction(e -> {
+            stage.close();
+        });
+
+        removeBtn.setOnAction(e -> {
+            Edge selectedEdge = edgeComboBox.getValue();
+            actions.removeEdge(selectedEdge);
+            nodes.remove(selectedEdge);
+            edgeComboBox.setValue(null);
+        });
     }
 
     private static FlowPane constructFlowPane(GridPane gridLayout, Button okBtn, Button removeBtn, Button cancelBtn) {
@@ -101,5 +128,16 @@ public class EditEdgeDialog {
         stage.setResizable(false);
         stage.setTitle("New edge");
         return stage;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class Data {
+
+        private final Edge edge;
+
+        private final double w1;
+
+        private final double w2;
     }
 }

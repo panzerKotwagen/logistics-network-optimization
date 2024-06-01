@@ -110,14 +110,14 @@ public class DrawPane extends Pane {
         update();
     }
 
-    public InfoEdge getEdge(InfoNode source, InfoNode target) {
-        for (InfoEdge edge : infoEdgeSet) {
-            if (edge.source == source && edge.target == target
-                    || edge.target == source && edge.source == target) {
-                return edge;
-            }
-        }
-        return null;
+    public InfoEdge editEdgeWeight(InfoEdge infoEdge, double w1, double w2) {
+        removeEdge(infoEdge);
+        return addEdge(infoEdge.source, infoEdge.target, w1, w2);
+    }
+
+    public void removeEdge(InfoEdge infoEdge) {
+        infoEdgeSet.remove(infoEdge);
+        update();
     }
 
     @Getter

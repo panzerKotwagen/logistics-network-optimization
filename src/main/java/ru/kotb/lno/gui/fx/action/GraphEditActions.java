@@ -141,7 +141,24 @@ public class GraphEditActions {
     }
 
     public void editEdge() {
-        new EditEdgeDialog(this).invoke();
+        Optional<EditEdgeDialog.Data> dataOptional = new EditEdgeDialog(this).invoke();
+
+        if(dataOptional.isEmpty()) {
+            return;
+        }
+
+        EditEdgeDialog.Data data = dataOptional.get();
+        Edge edge = data.getEdge();
+
+        graph.updateEdgeWeight(edge.getSourceNode(), edge.getTargetNode(), data.getW1(), data.getW2());
+        DrawPane.InfoEdge infoEdge = drawPane.editEdgeWeight(edgeToInfoEdgeMap.get(edge), data.getW1(), data.getW2());
+        edgeToInfoEdgeMap.put(edge, infoEdge);
+    }
+
+    public void removeEdge(Edge edge) {
+        graph.removeEdge(edge.getSourceNode(), edge.getTargetNode());
+        drawPane.removeEdge(edgeToInfoEdgeMap.get(edge));
+        edgeToInfoEdgeMap.remove(edge, edgeToInfoEdgeMap.get(edge));
     }
 
     public void update() {
