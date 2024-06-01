@@ -12,13 +12,16 @@ import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
 import ru.kotb.lno.graph.components.Edge;
+import ru.kotb.lno.graph.components.Node;
 import ru.kotb.lno.graph.impl.JGraphT;
 import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
 import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
 import ru.kotb.lno.gui.fx.node.DrawPane;
 import ru.kotb.lno.gui.fx.node.MyToolBar;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,6 +38,8 @@ public class GraphEditActions {
     private final Graph graph;
 
     private final DrawPane drawPane;
+
+    private final Map<Node, DrawPane.InfoNode> nodeToNodeMap = new HashMap<>();
 
     public GraphEditActions(DrawPane drawPane) {
         this.graph = new JGraphT();
@@ -123,7 +128,7 @@ public class GraphEditActions {
     }
 
     public void removeNode() {
-        if (drawPane.getInfoNodeSet() != null) {
+        if (drawPane.getSelectedNode() != null) {
             String removed = drawPane.getSelectedNode().getName();
             graph.removeNode(removed);
 

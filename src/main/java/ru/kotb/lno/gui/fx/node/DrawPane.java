@@ -29,9 +29,9 @@ import java.util.Set;
 @Getter
 public class DrawPane extends Pane {
 
-    private Set<InfoNode> infoNodeSet = new HashSet<>();
+    private final Set<InfoNode> infoNodeSet = new HashSet<>();
 
-    private Set<InfoEdge> infoEdgeSet = new HashSet<>();
+    private final Set<InfoEdge> infoEdgeSet = new HashSet<>();
 
     private InfoNode selectedNode;
 
