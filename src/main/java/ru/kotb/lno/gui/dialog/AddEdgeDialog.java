@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -40,16 +39,12 @@ public class AddEdgeDialog {
 
     private void init() {
         ObservableList<String> nodes = FXCollections.observableArrayList(actions.getNodes());
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setResizable(false);
-        stage.setTitle("New edge");
+
+        Stage stage = stageSettings();
 
         //TODO: fix ability to specify one node as the source and target
         ComboBox<String> sourceComboBox = new ComboBox<>(nodes);
         ComboBox<String> targetComboBox = new ComboBox<>(nodes);
-
-        Group group = new Group();
 
         Label nameLabel = new Label("Provide edge info");
         Label sourceLabel = new Label("Source:");
@@ -64,6 +59,48 @@ public class AddEdgeDialog {
         Button cancelBtn = new Button("Cancel");
         cancelBtn.setPrefWidth(60);
 
+        setBtnActions(okBtn, w1TextField, w2TextField, sourceComboBox, targetComboBox, stage, cancelBtn);
+
+        GridPane gridPane = getGridPane(sourceLabel, targetLabel, sourceComboBox, targetComboBox, w1Label, w2Label, w1TextField, w2TextField);
+
+        FlowPane flowPane = getFlowPane(nameLabel, gridPane, okBtn, cancelBtn);
+
+        Scene scene = new Scene(flowPane, 240, 200);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    private static FlowPane getFlowPane(Label nameLabel, GridPane gridPane, Button okBtn, Button cancelBtn) {
+        FlowPane flowPane = new FlowPane();
+
+        flowPane.getChildren().add(nameLabel);
+        flowPane.getChildren().add(gridPane);
+        flowPane.getChildren().add(okBtn);
+        flowPane.getChildren().add(cancelBtn);
+        flowPane.setHgap(20);
+        flowPane.setAlignment(Pos.CENTER);
+        return flowPane;
+    }
+
+    private static GridPane getGridPane(Label sourceLabel, Label targetLabel, ComboBox<String> sourceComboBox, ComboBox<String> targetComboBox, Label w1Label, Label w2Label, TextField w1TextField, TextField w2TextField) {
+        GridPane gridPane = new GridPane();
+
+        gridPane.setPadding(new Insets(10, 10, 10, 10));
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+
+        gridPane.add(sourceLabel, 0, 1);
+        gridPane.add(targetLabel, 0, 2);
+        gridPane.add(sourceComboBox, 1, 1);
+        gridPane.add(targetComboBox, 1, 2);
+        gridPane.add(w1Label, 0, 3);
+        gridPane.add(w2Label, 0, 4);
+        gridPane.add(w1TextField, 1, 3);
+        gridPane.add(w2TextField, 1, 4);
+        return gridPane;
+    }
+
+    private void setBtnActions(Button okBtn, TextField w1TextField, TextField w2TextField, ComboBox<String> sourceComboBox, ComboBox<String> targetComboBox, Stage stage, Button cancelBtn) {
         okBtn.setOnAction(e -> {
             double w1 = Double.parseDouble(w1TextField.getText());
             double w2 = Double.parseDouble(w2TextField.getText());
@@ -75,33 +112,13 @@ public class AddEdgeDialog {
         cancelBtn.setOnAction(e -> {
             stage.close();
         });
+    }
 
-        GridPane layout = new GridPane();
-        FlowPane flowPane = new FlowPane();
-
-        layout.setPadding(new Insets(10, 10, 10, 10));
-        layout.setVgap(5);
-        layout.setHgap(5);
-
-//        layout.add(nameLabel, 1, 0, 2, 1);
-        layout.add(sourceLabel, 0, 1);
-        layout.add(targetLabel, 0, 2);
-        layout.add(sourceComboBox, 1, 1);
-        layout.add(targetComboBox, 1, 2);
-        layout.add(w1Label, 0, 3);
-        layout.add(w2Label, 0, 4);
-        layout.add(w1TextField, 1, 3);
-        layout.add(w2TextField, 1, 4);
-
-        flowPane.getChildren().add(nameLabel);
-        flowPane.getChildren().add(layout);
-        flowPane.getChildren().add(okBtn);
-        flowPane.getChildren().add(cancelBtn);
-        flowPane.setHgap(20);
-        flowPane.setAlignment(Pos.CENTER);
-
-        Scene scene = new Scene(flowPane, 240, 200);
-        stage.setScene(scene);
-        stage.showAndWait();
+    private static Stage stageSettings() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+        stage.setTitle("New edge");
+        return stage;
     }
 }

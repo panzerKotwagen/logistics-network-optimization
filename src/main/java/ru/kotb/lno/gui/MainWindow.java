@@ -6,7 +6,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.kotb.lno.gui.action.GraphEditActions;
 import ru.kotb.lno.gui.node.DrawPane;
-import ru.kotb.lno.gui.node.MyMenuBar;
 import ru.kotb.lno.gui.node.MyToolBar;
 
 
@@ -21,21 +20,15 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setTitle("logistics-network-optimization");
-        stage.setWidth(900);
-        stage.setHeight(600);
-        stage.centerOnScreen();
-        stage.setResizable(false);
+        settings(stage);
 
         VBox vb = new VBox();
 
         DrawPane drawPane = new DrawPane();
         GraphEditActions actions = new GraphEditActions(drawPane);
 
-        MyMenuBar menuBar = new MyMenuBar(actions);
         MyToolBar toolBar = new MyToolBar(actions);
 
-        vb.getChildren().add(menuBar);
         vb.getChildren().add(toolBar);
 
         vb.getChildren().add(drawPane);
@@ -44,5 +37,13 @@ public class MainWindow extends Application {
         stage.setScene(scene);
 
         stage.show();
+    }
+
+    private static void settings(Stage stage) {
+        stage.setTitle("logistics-network-optimization");
+        stage.setWidth(900);
+        stage.setHeight(600);
+        stage.centerOnScreen();
+        stage.setResizable(false);
     }
 }
