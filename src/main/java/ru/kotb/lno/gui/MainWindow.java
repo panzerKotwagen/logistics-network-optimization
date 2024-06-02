@@ -1,13 +1,13 @@
-package ru.kotb.lno.gui.fx;
+package ru.kotb.lno.gui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.kotb.lno.gui.fx.action.GraphEditActions;
-import ru.kotb.lno.gui.fx.node.DrawPane;
-import ru.kotb.lno.gui.fx.node.MyMenuBar;
-import ru.kotb.lno.gui.fx.node.MyToolBar;
+import ru.kotb.lno.gui.action.GraphEditActions;
+import ru.kotb.lno.gui.node.DrawPane;
+import ru.kotb.lno.gui.node.MyMenuBar;
+import ru.kotb.lno.gui.node.MyToolBar;
 
 
 /**

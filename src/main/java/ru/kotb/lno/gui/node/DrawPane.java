@@ -1,4 +1,4 @@
-package ru.kotb.lno.gui.fx.node;
+package ru.kotb.lno.gui.node;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;

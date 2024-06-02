@@ -1,4 +1,4 @@
-package ru.kotb.lno.gui.fx.action;
+package ru.kotb.lno.gui.action;
 
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
@@ -14,11 +14,11 @@ import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.algorithms.OptimalPathSolver;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.impl.JGraphT;
-import ru.kotb.lno.gui.fx.dialog.AddEdgeDialog;
-import ru.kotb.lno.gui.fx.dialog.EditEdgeDialog;
-import ru.kotb.lno.gui.fx.dialog.OptimizeDialog;
-import ru.kotb.lno.gui.fx.node.DrawPane;
-import ru.kotb.lno.gui.fx.node.MyToolBar;
+import ru.kotb.lno.gui.dialog.AddEdgeDialog;
+import ru.kotb.lno.gui.dialog.EditEdgeDialog;
+import ru.kotb.lno.gui.dialog.OptimizeDialog;
+import ru.kotb.lno.gui.node.DrawPane;
+import ru.kotb.lno.gui.node.MyToolBar;
 
 import java.util.HashMap;
 import java.util.List;

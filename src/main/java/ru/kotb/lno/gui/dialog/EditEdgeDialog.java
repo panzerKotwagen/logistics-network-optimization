@@ -1,4 +1,4 @@
-package ru.kotb.lno.gui.fx.dialog;
+package ru.kotb.lno.gui.dialog;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.kotb.lno.graph.components.Edge;
-import ru.kotb.lno.gui.fx.action.GraphEditActions;
+import ru.kotb.lno.gui.action.GraphEditActions;
 
 import java.util.ArrayList;
 import java.util.List;

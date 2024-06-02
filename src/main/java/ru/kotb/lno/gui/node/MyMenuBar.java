@@ -1,9 +1,9 @@
-package ru.kotb.lno.gui.fx.node;
+package ru.kotb.lno.gui.node;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import ru.kotb.lno.gui.fx.action.GraphEditActions;
+import ru.kotb.lno.gui.action.GraphEditActions;
 
 
 /**

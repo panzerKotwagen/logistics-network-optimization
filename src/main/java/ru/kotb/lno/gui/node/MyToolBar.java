@@ -1,8 +1,8 @@
-package ru.kotb.lno.gui.fx.node;
+package ru.kotb.lno.gui.node;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
-import ru.kotb.lno.gui.fx.action.GraphEditActions;
+import ru.kotb.lno.gui.action.GraphEditActions;
 
 
 /**
