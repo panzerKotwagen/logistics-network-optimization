@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import ru.kotb.lno.dto.SettingsDTO;
 import ru.kotb.lno.gui.action.GraphEditActions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -76,7 +78,12 @@ public class OptimizeDialog {
     }
 
     private void init() {
-        ObservableList<String> nodes = FXCollections.observableArrayList(actions.getNodes());
+        List<String> nodeList = new ArrayList<>(actions.getNodes());
+        nodeList = nodeList.stream()
+                .sorted()
+                .toList();
+
+        ObservableList<String> nodes = FXCollections.observableArrayList(nodeList);
 
         Stage stage = stageSettings();
 

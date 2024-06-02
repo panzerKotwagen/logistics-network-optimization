@@ -15,10 +15,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jgrapht.graph.DefaultEdge;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.gui.action.GraphEditActions;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,6 +83,10 @@ public class EditEdgeDialog {
         Stage stage = stageSettings();
 
         List<Edge> infoEdgeList = new ArrayList<>(actions.getEdgeToInfoEdgeMap().keySet());
+        Comparator<Edge> comparator = Comparator.comparing(DefaultEdge::toString);
+
+        infoEdgeList = infoEdgeList.stream().sorted(comparator).toList();
+
         nodes = FXCollections.observableArrayList(infoEdgeList);
         ComboBox<Edge> edgeComboBox = new ComboBox<>(nodes);
 
