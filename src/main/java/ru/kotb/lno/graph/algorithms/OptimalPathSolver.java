@@ -99,11 +99,6 @@ public class OptimalPathSolver
 
             current.controlSet = controlSet;
         }
-
-        if (!viewed.contains(lastState)) {
-            throw new RuntimeException("There is no path from " + start
-                    + " to " + last + " in the graph");
-        }
     }
 
     private void initMainCriteriaValue(String startNode, String lastNode, int mainCriteriaIdx) {
