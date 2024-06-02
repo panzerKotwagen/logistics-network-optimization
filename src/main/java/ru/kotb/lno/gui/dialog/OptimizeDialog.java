@@ -31,6 +31,45 @@ public class OptimizeDialog {
         this.actions = actions;
     }
 
+    private static GridPane getGridPane(
+            Label sourceLabel, Label targetLabel, RadioButton costBtn,
+            Label concessionLabel, ComboBox<String> startComboBox,
+            ComboBox<String> endComboBox, RadioButton timeBtn,
+            TextField concessionTextField,
+            Button okBtn, Button cancelBtn) {
+
+        GridPane gridPane = new GridPane();
+
+        gridPane.setPadding(new Insets(10, 10, 10, 10));
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+
+        gridPane.add(sourceLabel, 0, 0);
+        gridPane.add(targetLabel, 0, 1);
+        gridPane.add(costBtn, 0, 2);
+        gridPane.add(concessionLabel, 0, 3);
+        gridPane.add(okBtn, 0, 4);
+
+        gridPane.setAlignment(Pos.CENTER);
+        GridPane.setHalignment(concessionLabel, HPos.CENTER);
+
+        gridPane.add(startComboBox, 1, 0);
+        gridPane.add(endComboBox, 1, 1);
+        gridPane.add(timeBtn, 1, 2);
+        gridPane.add(concessionTextField, 1, 3);
+        gridPane.add(cancelBtn, 1, 4);
+
+        return gridPane;
+    }
+
+    private static Stage stageSettings() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+        stage.setTitle("Optimize");
+        return stage;
+    }
+
     public Optional<SettingsDTO> invoke() {
         init();
         return Optional.ofNullable(res);
@@ -74,37 +113,6 @@ public class OptimizeDialog {
         stage.showAndWait();
     }
 
-    private static GridPane getGridPane(
-            Label sourceLabel, Label targetLabel, RadioButton costBtn,
-            Label concessionLabel, ComboBox<String> startComboBox,
-            ComboBox<String> endComboBox, RadioButton timeBtn,
-            TextField concessionTextField,
-            Button okBtn, Button cancelBtn) {
-
-        GridPane gridPane = new GridPane();
-
-        gridPane.setPadding(new Insets(10, 10, 10, 10));
-        gridPane.setVgap(5);
-        gridPane.setHgap(5);
-
-        gridPane.add(sourceLabel, 0, 0);
-        gridPane.add(targetLabel, 0, 1);
-        gridPane.add(costBtn, 0, 2);
-        gridPane.add(concessionLabel, 0, 3);
-        gridPane.add(okBtn, 0, 4);
-
-        gridPane.setAlignment(Pos.CENTER);
-        GridPane.setHalignment(concessionLabel, HPos.CENTER);
-
-        gridPane.add(startComboBox, 1, 0);
-        gridPane.add(endComboBox, 1, 1);
-        gridPane.add(timeBtn, 1, 2);
-        gridPane.add(concessionTextField, 1, 3);
-        gridPane.add(cancelBtn, 1, 4);
-
-        return gridPane;
-    }
-
     private void setBtnActions(Button okBtn, TextField concessionTextField, ComboBox<String> startComboBox, ComboBox<String> endComboBox, ToggleGroup toggleGroup, RadioButton costBtn, Stage stage, Button cancelBtn) {
         okBtn.setOnAction(e -> {
             double concessionValue = Double.parseDouble(concessionTextField.getText());
@@ -125,13 +133,5 @@ public class OptimizeDialog {
         cancelBtn.setOnAction(e -> {
             stage.close();
         });
-    }
-
-    private static Stage stageSettings() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setResizable(false);
-        stage.setTitle("Optimize");
-        return stage;
     }
 }

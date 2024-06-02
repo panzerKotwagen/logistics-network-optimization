@@ -29,12 +29,12 @@ public class OptimalPathSolver
 
     private final int mainCriteriaIdx;
 
-    private double globalCompromiseValue;
-
     /**
      * Memorization of calculated values
      */
     private final Map<Integer, Map<State, Result>> cacheW = new HashMap<>();
+
+    private double globalCompromiseValue;
 
     /**
      * The starting state. Corresponds to the node from which the

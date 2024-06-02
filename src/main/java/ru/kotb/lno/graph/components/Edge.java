@@ -19,14 +19,14 @@ public class Edge extends DefaultEdge {
     private static final int WEIGHT_COUNT = 2;
 
     /**
-     * Edge name
-     */
-    private String name;
-
-    /**
      * Weight array
      */
     private final double[] weights = new double[WEIGHT_COUNT];
+
+    /**
+     * Edge name
+     */
+    private String name;
 
     public Edge(String name, double w1, double w2) {
         this.name = name;

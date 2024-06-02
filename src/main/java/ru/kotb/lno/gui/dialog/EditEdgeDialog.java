@@ -29,11 +29,48 @@ public class EditEdgeDialog {
 
     ObservableList<Edge> nodes;
 
+    private Data data;
+
     public EditEdgeDialog(GraphEditActions actions) {
         this.actions = actions;
     }
 
-    private Data data;
+    private static FlowPane constructFlowPane(GridPane gridLayout, Button okBtn, Button removeBtn, Button cancelBtn) {
+        FlowPane flowLayout = new FlowPane();
+        flowLayout.setAlignment(Pos.CENTER);
+        flowLayout.setHgap(5);
+
+        flowLayout.getChildren().add(gridLayout);
+        flowLayout.getChildren().add(okBtn);
+        flowLayout.getChildren().add(removeBtn);
+        flowLayout.getChildren().add(cancelBtn);
+        return flowLayout;
+    }
+
+    private static GridPane constructGridPane(Label edgeLabel, Label w1Label, Label w2Label, ComboBox<Edge> edgeComboBox, TextField w1TextField, TextField w2TextField) {
+        GridPane gridLayout = new GridPane();
+
+        gridLayout.setPadding(new Insets(10, 10, 10, 10));
+        gridLayout.setVgap(5);
+        gridLayout.setHgap(5);
+
+        gridLayout.add(edgeLabel, 0, 0);
+        gridLayout.add(w1Label, 0, 1);
+        gridLayout.add(w2Label, 0, 2);
+
+        gridLayout.add(edgeComboBox, 1, 0);
+        gridLayout.add(w1TextField, 1, 1);
+        gridLayout.add(w2TextField, 1, 2);
+        return gridLayout;
+    }
+
+    private static Stage stageSettings() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+        stage.setTitle("New edge");
+        return stage;
+    }
 
     public Optional<Data> invoke() {
         init();
@@ -93,42 +130,6 @@ public class EditEdgeDialog {
         });
     }
 
-    private static FlowPane constructFlowPane(GridPane gridLayout, Button okBtn, Button removeBtn, Button cancelBtn) {
-        FlowPane flowLayout = new FlowPane();
-        flowLayout.setAlignment(Pos.CENTER);
-        flowLayout.setHgap(5);
-
-        flowLayout.getChildren().add(gridLayout);
-        flowLayout.getChildren().add(okBtn);
-        flowLayout.getChildren().add(removeBtn);
-        flowLayout.getChildren().add(cancelBtn);
-        return flowLayout;
-    }
-
-    private static GridPane constructGridPane(Label edgeLabel, Label w1Label, Label w2Label, ComboBox<Edge> edgeComboBox, TextField w1TextField, TextField w2TextField) {
-        GridPane gridLayout = new GridPane();
-
-        gridLayout.setPadding(new Insets(10, 10, 10, 10));
-        gridLayout.setVgap(5);
-        gridLayout.setHgap(5);
-
-        gridLayout.add(edgeLabel, 0, 0);
-        gridLayout.add(w1Label, 0, 1);
-        gridLayout.add(w2Label, 0, 2);
-
-        gridLayout.add(edgeComboBox, 1, 0);
-        gridLayout.add(w1TextField, 1, 1);
-        gridLayout.add(w2TextField, 1, 2);
-        return gridLayout;
-    }
-
-    private static Stage stageSettings() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setResizable(false);
-        stage.setTitle("New edge");
-        return stage;
-    }
 
     @Getter
     @RequiredArgsConstructor

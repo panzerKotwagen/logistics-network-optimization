@@ -131,7 +131,7 @@ public class DrawPane extends Pane {
 
         private double y;
 
-        private List<InfoEdge> edgeList = new ArrayList<>();
+        private final List<InfoEdge> edgeList = new ArrayList<>();
 
         public InfoNode(String txt) {
             Text text = new Text(txt);
@@ -175,9 +175,9 @@ public class DrawPane extends Pane {
     @Getter
     public static class InfoEdge extends Line {
 
-        private InfoNode source;
+        private final InfoNode source;
 
-        private InfoNode target;
+        private final InfoNode target;
 
         private Text text;
 

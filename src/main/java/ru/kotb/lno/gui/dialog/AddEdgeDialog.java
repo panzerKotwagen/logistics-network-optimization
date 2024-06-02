@@ -27,11 +27,11 @@ public class AddEdgeDialog {
 
     private final GraphEditActions actions;
 
+    private EdgeDTO inputtedEdge;
+
     public AddEdgeDialog(GraphEditActions actions) {
         this.actions = actions;
     }
-
-    private EdgeDTO inputtedEdge;
 
     public Optional<EdgeDTO> invoke() {
         init();

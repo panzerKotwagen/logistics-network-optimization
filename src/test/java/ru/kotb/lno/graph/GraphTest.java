@@ -2,7 +2,6 @@ package ru.kotb.lno.graph;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.TestComponent;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.impl.JGraphT;
 
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 
-@TestComponent
 public class GraphTest {
 
     private final Graph graph = new JGraphT();

@@ -143,7 +143,7 @@ public class GraphEditActions {
     public void editEdge() {
         Optional<EditEdgeDialog.Data> dataOptional = new EditEdgeDialog(this).invoke();
 
-        if(dataOptional.isEmpty()) {
+        if (dataOptional.isEmpty()) {
             return;
         }
 

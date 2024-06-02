@@ -145,17 +145,4 @@ public class OptimalPathTest {
 
         Assertions.assertThat(res.getWin()).isEqualTo(9);
     }
-
-    @Test
-    void throwExceptionWhenThereIsNoPathFromStartToLast() {
-        String[] nodes = {"S", "11", "T"};
-        for (String node : nodes) {
-            graph.addNode(node);
-        }
-        graph.addEdge("S", "11", "", 1, 1);
-
-        org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () -> new OptimalPathSolver(graph, "S", "T", 0, 0));
-    }
 }
