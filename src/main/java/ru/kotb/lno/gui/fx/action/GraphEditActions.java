@@ -208,7 +208,7 @@ public class GraphEditActions {
             }
 
             DrawPane.InfoEdge infoEdge = edgeToInfoEdgeMap.get(edge);
-            infoEdge.changeColor(Color.GREEN);
+            infoEdge.changeColor(Color.LIGHTGREEN);
 
             if (currentNode == infoEdge.getSource()) {
                 currentNode = infoEdge.getTarget();

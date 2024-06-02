@@ -57,14 +57,14 @@ public class DrawPane extends Pane {
         this.getChildren().add(new Canvas(900, 600));
 
         for (InfoNode infoNode : infoNodeSet) {
-            infoNode.changeColor(Color.YELLOW);
+            infoNode.changeColor(Color.WHITE);
             this.getChildren().add(infoNode);
         }
 
         for (InfoEdge infoEdge : infoEdgeSet) {
             this.getChildren().add(infoEdge);
             infoEdge.toBack();
-            infoEdge.changeColor(Color.GREY);
+            infoEdge.changeColor(Color.LIGHTGREY);
             this.getChildren().add(infoEdge.text);
         }
     }
@@ -140,7 +140,7 @@ public class DrawPane extends Pane {
             setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
                     "-fx-border-color:black;" +
                     "-fx-border-width:2px;" +
-                    "-fx-background-color:yellow;");
+                    "-fx-background-color:white;");
 
             setMinSize(size, size);
             getChildren().add(text);
@@ -187,7 +187,7 @@ public class DrawPane extends Pane {
             this.endXProperty().bind(target.centerXProperty());
             this.endYProperty().bind(target.centerYProperty());
             this.setStrokeWidth(3);
-            this.setStroke(Color.GREY);
+            this.setStroke(Color.LIGHTGRAY);
 
             this.source = source;
             this.target = target;
@@ -201,12 +201,11 @@ public class DrawPane extends Pane {
             double maxY = Math.max(this.getStartY(), this.getEndY());
             double minY = Math.min(this.getStartY(), this.getEndY());
 
-            double x = minX + (maxX - minX) / 2 - 50;
-            double y = minY + (maxY - minY) / 2;
-
+            double x = minX + (maxX - minX) / 2 - (double) (string.length() * 6) / 2;
+            double y = minY + (maxY - minY) / 2 - 5;
 
             text = new Text(string);
-            text.setFont(new Font("Arial", 15));
+            text.setFont(Font.font("Arial", FontWeight.BOLD, 15));
             text.setLayoutX(x);
             text.setLayoutY(y);
         }
