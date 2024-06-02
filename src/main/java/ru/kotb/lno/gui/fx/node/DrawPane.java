@@ -64,7 +64,7 @@ public class DrawPane extends Pane {
         for (InfoEdge infoEdge : infoEdgeSet) {
             this.getChildren().add(infoEdge);
             infoEdge.toBack();
-            infoEdge.changeColor(Color.BLACK);
+            infoEdge.changeColor(Color.GREY);
             this.getChildren().add(infoEdge.text);
         }
     }
@@ -186,7 +186,8 @@ public class DrawPane extends Pane {
             this.startYProperty().bind(source.centerYProperty());
             this.endXProperty().bind(target.centerXProperty());
             this.endYProperty().bind(target.centerYProperty());
-            this.setStrokeWidth(5);
+            this.setStrokeWidth(3);
+            this.setStroke(Color.GREY);
 
             this.source = source;
             this.target = target;
@@ -200,10 +201,12 @@ public class DrawPane extends Pane {
             double maxY = Math.max(this.getStartY(), this.getEndY());
             double minY = Math.min(this.getStartY(), this.getEndY());
 
-            double x = minX + (maxX - minX) / 2 - 15;
-            double y = minY + (maxY - minY) / 2 - 15;
+            double x = minX + (maxX - minX) / 2 - 50;
+            double y = minY + (maxY - minY) / 2;
+
 
             text = new Text(string);
+            text.setFont(new Font("Arial", 15));
             text.setLayoutX(x);
             text.setLayoutY(y);
         }
