@@ -159,7 +159,7 @@ public class OptimalPathSolver
             double optimalWi;
             if (nextState.mainCriteriaValue > mainCriteriaValue + globalCompromiseValue) {
                 optimalWi = Double.MAX_VALUE;
-            } else if (isStateLast(nextState) || nextState.controlSet.isEmpty()) {
+            } else if (isStateLast(nextState)) {
                 optimalWi = wi;
             } else {
                 optimalWi = wi + W(stage + 1, nextState).win;
