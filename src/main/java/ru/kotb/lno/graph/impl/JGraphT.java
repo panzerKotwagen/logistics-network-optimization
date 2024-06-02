@@ -1,7 +1,6 @@
 package ru.kotb.lno.graph.impl;
 
 import org.jgrapht.graph.SimpleGraph;
-import org.springframework.stereotype.Component;
 import ru.kotb.lno.graph.Graph;
 import ru.kotb.lno.graph.components.Edge;
 import ru.kotb.lno.graph.components.Node;
@@ -10,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 
 
-@Component
 public class JGraphT implements Graph {
 
     private final org.jgrapht.Graph<String, Edge> graph = new SimpleGraph<>(Edge.class);
