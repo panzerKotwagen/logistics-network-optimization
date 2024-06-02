@@ -28,8 +28,7 @@ import java.util.Set;
 
 
 /**
- * The class describes action performing the following graph
- * operations: add vertex, add edge
+ * The class describes graph actions
  */
 public class GraphEditActions {
 
@@ -184,22 +183,30 @@ public class GraphEditActions {
         solver.solve();
         List<String> optPath = solver.restoreOptimalPath();
 
-        DrawPane.InfoNode currentNode = drawPane.getInfoNode(optPath.get(0));
-
-        if (currentNode == null) {
+        if (optPath.isEmpty()) {
             return;
         }
 
-        currentNode.changeColor(Color.GREEN);
+        update();
+
+        double[] weightSum = highlightOptPath(optPath, settings);
+
+        drawPathSummaryCriteria(weightSum);
+    }
+
+    private double[] highlightOptPath(List<String> optPath, SettingsDTO settings) {
+        DrawPane.InfoNode currentNode = drawPane.getInfoNode(optPath.get(0));
+        if (settings.getMainCriteriaNum() == 0) {
+            currentNode.changeColor(Color.GREEN);
+        } else {
+            currentNode.changeColor(Color.INDIANRED);
+        }
 
         double[] weightSum = new double[2];
 
         for (int i = 1; i < optPath.size(); i++) {
             String source = optPath.get(i - 1);
             String target = optPath.get(i);
-
-            DrawPane.InfoNode infoNode = drawPane.getInfoNode(target);
-            infoNode.changeColor(Color.GREEN);
 
             Edge edge = graph.getEdge(source, target);
 
@@ -208,21 +215,28 @@ public class GraphEditActions {
             }
 
             DrawPane.InfoEdge infoEdge = edgeToInfoEdgeMap.get(edge);
-            infoEdge.changeColor(Color.LIGHTGREEN);
-
-            if (currentNode == infoEdge.getSource()) {
-                currentNode = infoEdge.getTarget();
+            if (settings.getMainCriteriaNum() == 0) {
+                infoEdge.changeColor(Color.LIGHTGREEN);
             } else {
-                currentNode = infoEdge.getSource();
+                infoEdge.changeColor(Color.INDIANRED);
             }
 
-            currentNode.changeColor(Color.GREEN);
+            currentNode = drawPane.getInfoNode(graph.getOppositeNode(edge, source));
+            if (settings.getMainCriteriaNum() == 0) {
+                currentNode.changeColor(Color.GREEN);
+            } else {
+                currentNode.changeColor(Color.INDIANRED);
+            }
         }
 
+        return weightSum;
+    }
+
+    private void drawPathSummaryCriteria(double[] weightSum) {
         String weights = String.format("(%.1f, %.1f)", weightSum[0], weightSum[1]);
         Text text = new Text(weights);
         text.setFont(Font.font("Arial", FontWeight.LIGHT, FontPosture.REGULAR, 15));
-        text.setX(800);
+        text.setX(750);
         text.setY(20);
         drawPane.getChildren().add(text);
     }

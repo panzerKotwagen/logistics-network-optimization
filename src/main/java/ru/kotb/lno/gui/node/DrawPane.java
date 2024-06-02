@@ -139,8 +139,7 @@ public class DrawPane extends Pane {
             double size = 20 + (2 * PADDING);
             setStyle("-fx-shape:\"M 0 0 m -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0\";" +
                     "-fx-border-color:black;" +
-                    "-fx-border-width:2px;" +
-                    "-fx-background-color:white;");
+                    "-fx-border-width:2px;");
 
             setMinSize(size, size);
             getChildren().add(text);
